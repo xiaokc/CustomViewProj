@@ -15,6 +15,7 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -128,10 +129,18 @@ public class SimpleFloatView {
 
         }
 
+        long currentTime;
+        long lastTime;
+        float lastX;
+        float lastY;
+
+        boolean isLongPressed = false;
+
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             mTouchScreenX = event.getRawX();
             mTouchScreenY = event.getRawY() - getStatusBarHeight();
+            Log.i("===>xkc","x:"+event.getX()+",y:"+event.getY());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: // 手指按下
                     mTouchX = event.getX();
@@ -142,9 +151,19 @@ public class SimpleFloatView {
                     break;
                 case MotionEvent.ACTION_MOVE: // 手指移动
                     updateViewPosition(); // 更新view坐标
+                    currentTime = System.currentTimeMillis();
+                    if (Math.abs(event.getX() - lastX) > 2 || Math.abs(event.getY() - lastY) > 2) {
+                        lastTime = currentTime;
+                    }
+
+                    if (currentTime - lastTime >= 1000 && !isLongPressed && lastTime != 0) { // 长按
+                        Log.i("===xkc", "long click");
+                        isLongPressed = true;
+                    }
                     break;
                 case MotionEvent.ACTION_UP: // 手指抬起
                     updateViewPosition(); // 更新view坐标
+                    isLongPressed = false;
                     mTouchX = mTouchY = 0;
                     if (mTouchScreenX - mStartX < 5 && mTouchScreenY - mStartY < 5) {
                         if (mClickListener != null) {
@@ -155,6 +174,8 @@ public class SimpleFloatView {
                     absorbentView(); // 吸附到左侧或者右侧
                     break;
             }
+            lastX = event.getX();
+            lastY = event.getY();
             return true;
 
         }
@@ -177,7 +198,7 @@ public class SimpleFloatView {
                         public void run() {
                             boolean isStop = refreshAbsorbentView(true, screenWidth);
                             if (!isStop) {
-                                handler.postDelayed(this,8);
+                                handler.postDelayed(this, 8);
                             }
                         }
                     });
@@ -187,7 +208,7 @@ public class SimpleFloatView {
                         public void run() {
                             boolean isStop = refreshAbsorbentView(false, screenWidth);
                             if (!isStop) {
-                                handler.postDelayed(this,8);
+                                handler.postDelayed(this, 8);
                             }
                         }
                     });
@@ -197,8 +218,10 @@ public class SimpleFloatView {
 
         /**
          * 更新吸附后的位置，完成吸附效果
+         *
          * @param isToRight
          * @param screenWidth
+         *
          * @return
          */
         private boolean refreshAbsorbentView(boolean isToRight, int screenWidth) {
@@ -208,7 +231,7 @@ public class SimpleFloatView {
             if (isToRight) {
                 if (floatViewX < screenWidth && floatViewX > screenWidth / 2) {
                     wmParams.x = floatViewX + offset;
-                    windowManager.updateViewLayout(this,wmParams);
+                    windowManager.updateViewLayout(this, wmParams);
                     isStop = false;
                 } else if (floatViewX >= screenWidth) {
                     isStop = true;
@@ -216,7 +239,7 @@ public class SimpleFloatView {
             } else {
                 if (floatViewX > 0 && floatViewX <= screenWidth / 2) {
                     wmParams.x = floatViewX - offset;
-                    windowManager.updateViewLayout(this,wmParams);
+                    windowManager.updateViewLayout(this, wmParams);
                     isStop = false;
                 } else if (floatViewX <= 0) {
                     isStop = true;
