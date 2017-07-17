@@ -1,6 +1,7 @@
 package com.android.cong.customviewproj.screenocr;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 /**
@@ -15,5 +16,10 @@ public class ScreenUtil {
     public static int dipToPx(Context context, float dipValue) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 dipValue, context.getResources().getDisplayMetrics());
+    }
+
+    public static int getScreenWidth(Context context){
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.widthPixels;
     }
 }

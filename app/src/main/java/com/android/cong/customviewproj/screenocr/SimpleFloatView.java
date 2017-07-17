@@ -12,6 +12,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -139,16 +141,18 @@ public class SimpleFloatView {
                     mStartY = mTouchScreenY;
                     break;
                 case MotionEvent.ACTION_MOVE: // 手指移动
-                    updateViewPosition();
+                    updateViewPosition(); // 更新view坐标
                     break;
                 case MotionEvent.ACTION_UP: // 手指抬起
-                    updateViewPosition();
+                    updateViewPosition(); // 更新view坐标
                     mTouchX = mTouchY = 0;
                     if (mTouchScreenX - mStartX < 5 && mTouchScreenY - mStartY < 5) {
                         if (mClickListener != null) {
                             mClickListener.onClick(this);
                         }
                     }
+
+                    absorbentView(); // 吸附到左侧或者右侧
                     break;
             }
             return true;
@@ -160,6 +164,65 @@ public class SimpleFloatView {
             wmParams.x = (int) (mTouchScreenX - mTouchX);
             wmParams.y = (int) (mTouchScreenY - mTouchY);
             windowManager.updateViewLayout(this, wmParams); // 刷新显示位置
+        }
+
+        private void absorbentView() {
+            if (windowManager != null && wmParams != null) {
+                final int screenWidth = ScreenUtil.getScreenWidth(BaseApplication.getInstance());
+                int floatViewX = wmParams.x;
+                final Handler handler = new Handler(Looper.getMainLooper());
+                if (floatViewX > screenWidth / 2) { // 吸附到右侧
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean isStop = refreshAbsorbentView(true, screenWidth);
+                            if (!isStop) {
+                                handler.postDelayed(this,8);
+                            }
+                        }
+                    });
+                } else { // 吸附到左侧
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean isStop = refreshAbsorbentView(false, screenWidth);
+                            if (!isStop) {
+                                handler.postDelayed(this,8);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        /**
+         * 更新吸附后的位置，完成吸附效果
+         * @param isToRight
+         * @param screenWidth
+         * @return
+         */
+        private boolean refreshAbsorbentView(boolean isToRight, int screenWidth) {
+            int floatViewX = wmParams.x;
+            int offset = 15;
+            boolean isStop = false;
+            if (isToRight) {
+                if (floatViewX < screenWidth && floatViewX > screenWidth / 2) {
+                    wmParams.x = floatViewX + offset;
+                    windowManager.updateViewLayout(this,wmParams);
+                    isStop = false;
+                } else if (floatViewX >= screenWidth) {
+                    isStop = true;
+                }
+            } else {
+                if (floatViewX > 0 && floatViewX <= screenWidth / 2) {
+                    wmParams.x = floatViewX - offset;
+                    windowManager.updateViewLayout(this,wmParams);
+                    isStop = false;
+                } else if (floatViewX <= 0) {
+                    isStop = true;
+                }
+            }
+            return isStop;
         }
 
         @Override
@@ -178,7 +241,7 @@ public class SimpleFloatView {
             wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
-            wmParams.gravity = Gravity.LEFT | Gravity.TOP; // 调整悬浮窗口至右上角，便与调整坐标
+            wmParams.gravity = Gravity.LEFT | Gravity.TOP; // 调整悬浮窗口至左上角，便与调整坐标
 
             // location and size
             wmParams.x = 0;
