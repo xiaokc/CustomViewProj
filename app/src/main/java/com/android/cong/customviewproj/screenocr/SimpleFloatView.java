@@ -6,6 +6,7 @@ import com.android.cong.customviewproj.BaseApplication;
 import com.android.cong.customviewproj.R;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,7 +15,6 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -66,8 +66,7 @@ public class SimpleFloatView {
         float mStartX;
         float mStartY;
 
-        OnClickListener mClickListener;
-        OnLongClickListener mLongClickListener;
+        Context mContext;
 
         static {
             paint.setAntiAlias(true);
@@ -82,6 +81,7 @@ public class SimpleFloatView {
             windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
             wmParams = new WindowManager.LayoutParams();
+            mContext = context;
         }
 
         @Override
@@ -160,9 +160,7 @@ public class SimpleFloatView {
                         lastTime = currentTime;
                     } else if (currentTime - lastTime >= 1000 && !longPressed && lastTime != 0) { // 长按
                         Log.i("===xkc", "long pressed");
-                        if (mLongClickListener != null) {
-                            mLongClickListener.onLongClick(this);
-                        }
+                        doLongClick();
                         longPressed = true;
                         lastTime = 0;
                     }
@@ -171,16 +169,11 @@ public class SimpleFloatView {
                     updateViewPosition(); // 更新view坐标
                     mTouchX = mTouchY = 0;
                     if (mTouchScreenX - mStartX < 5 && mTouchScreenY - mStartY < 5) {
-                        if (mClickListener != null) {
-                            mClickListener.onClick(this);
-                        }
+                        doClick();
 
                         if (System.currentTimeMillis() - mTouchDownTime >= 1000 && !longPressed) {
                             Log.i("===xkc", "long click");
-                            if (mLongClickListener != null) {
-                                mLongClickListener.onLongClick(this);
-                                longPressed = true;
-                            }
+                            doLongClick();
                         }
                     }
                     longPressed = false;
@@ -261,15 +254,23 @@ public class SimpleFloatView {
             return isStop;
         }
 
-        @Override
-        public void setOnClickListener(@Nullable OnClickListener l) {
-            super.setOnClickListener(l);
-            this.mClickListener = l;
+        /**
+         * 长按事件处理
+         */
+        private void doLongClick() {
+
         }
 
-        @Override
-        public void setOnLongClickListener(@Nullable OnLongClickListener l) {
-            super.setOnLongClickListener(l);
+        /**
+         * 点击事件处理
+         */
+        private void doClick() {
+            // 点击后开始截屏
+            Log.i("===>xkc", "点击，准备截屏");
+            Intent intent = new Intent(BaseApplication.getInstance(), ScreenShotActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                    | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            mContext.startActivity(intent);
         }
 
         public void show() {

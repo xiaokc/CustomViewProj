@@ -22,4 +22,14 @@ public class ScreenUtil {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         return dm.widthPixels;
     }
+
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.heightPixels;
+    }
+
+    public static int getDensity(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.densityDpi;
+    }
 }
