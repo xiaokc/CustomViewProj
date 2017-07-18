@@ -67,6 +67,7 @@ public class SimpleFloatView {
         float mStartY;
 
         OnClickListener mClickListener;
+        OnLongClickListener mLongClickListener;
 
         static {
             paint.setAntiAlias(true);
@@ -129,20 +130,23 @@ public class SimpleFloatView {
 
         }
 
+        long mTouchDownTime;
         long currentTime;
         long lastTime;
         float lastX;
         float lastY;
 
-        boolean isLongPressed = false;
+        boolean longPressed = false;
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             mTouchScreenX = event.getRawX();
             mTouchScreenY = event.getRawY() - getStatusBarHeight();
-            Log.i("===>xkc","x:"+event.getX()+",y:"+event.getY());
+            Log.i("===>xkc", "x:" + event.getX() + ",y:" + event.getY());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: // 手指按下
+                    mTouchDownTime = System.currentTimeMillis();
+
                     mTouchX = event.getX();
                     mTouchY = event.getY();
 
@@ -152,25 +156,34 @@ public class SimpleFloatView {
                 case MotionEvent.ACTION_MOVE: // 手指移动
                     updateViewPosition(); // 更新view坐标
                     currentTime = System.currentTimeMillis();
-                    if (Math.abs(event.getX() - lastX) > 2 || Math.abs(event.getY() - lastY) > 2) {
+                    if (Math.abs(event.getX() - lastX) > 5 || Math.abs(event.getY() - lastY) > 5) {
                         lastTime = currentTime;
-                    }
-
-                    if (currentTime - lastTime >= 1000 && !isLongPressed && lastTime != 0) { // 长按
-                        Log.i("===xkc", "long click");
-                        isLongPressed = true;
+                    } else if (currentTime - lastTime >= 1000 && !longPressed && lastTime != 0) { // 长按
+                        Log.i("===xkc", "long pressed");
+                        if (mLongClickListener != null) {
+                            mLongClickListener.onLongClick(this);
+                        }
+                        longPressed = true;
+                        lastTime = 0;
                     }
                     break;
                 case MotionEvent.ACTION_UP: // 手指抬起
                     updateViewPosition(); // 更新view坐标
-                    isLongPressed = false;
                     mTouchX = mTouchY = 0;
                     if (mTouchScreenX - mStartX < 5 && mTouchScreenY - mStartY < 5) {
                         if (mClickListener != null) {
                             mClickListener.onClick(this);
                         }
-                    }
 
+                        if (System.currentTimeMillis() - mTouchDownTime >= 1000 && !longPressed) {
+                            Log.i("===xkc", "long click");
+                            if (mLongClickListener != null) {
+                                mLongClickListener.onLongClick(this);
+                                longPressed = true;
+                            }
+                        }
+                    }
+                    longPressed = false;
                     absorbentView(); // 吸附到左侧或者右侧
                     break;
             }
@@ -252,6 +265,11 @@ public class SimpleFloatView {
         public void setOnClickListener(@Nullable OnClickListener l) {
             super.setOnClickListener(l);
             this.mClickListener = l;
+        }
+
+        @Override
+        public void setOnLongClickListener(@Nullable OnLongClickListener l) {
+            super.setOnLongClickListener(l);
         }
 
         public void show() {
