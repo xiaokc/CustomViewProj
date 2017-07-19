@@ -1,5 +1,10 @@
 package com.android.cong.customviewproj.pictureview;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
 import android.content.Context;
@@ -7,6 +12,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
 import android.text.TextUtils;
 
 /**
@@ -297,6 +305,74 @@ public class ImageUtil {
             return bitmap;
         }
         return bitmap;
+    }
+
+    /**
+     * drawable 转为 bitmap
+     * @param drawable
+     * @return
+     */
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if(bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    /**
+     * 将 bitmap 保存成图片文件
+     * @param bitmap
+     * @param filePath
+     * @return
+     */
+    public static boolean saveBitmapToFile(Bitmap bitmap, String filePath) {
+        File file = null;
+        if (bitmap != null) {
+            try {
+
+                if (TextUtils.isEmpty(filePath)) {
+                    filePath = "/sdcard/" + SystemClock.currentThreadTimeMillis() +".png";
+                }
+                file = new File(filePath);
+
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+
+                FileOutputStream fos = new FileOutputStream(file);
+                if (fos != null) {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.flush();
+                    fos.close();
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                file = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                file = null;
+            }
+
+            if (file != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
