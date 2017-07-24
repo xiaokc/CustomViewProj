@@ -42,6 +42,7 @@ public class CustomImageView extends View {
     private Canvas mBufferCanvas;
     private Paint mPaint;
     private int mPaintSize = 20; // 画笔粗细
+    private int mPaintColor;
 
     private float mScale; // 图片在相对于居中时的缩放倍数 （ 图片真实的缩放倍数为 mPrivateScale*mScale ）
 
@@ -98,8 +99,10 @@ public class CustomImageView extends View {
         }
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CustomImageView);
+        //todo: 这里直接读取属性设置的图片，有可能会oom
         mDrawable = typedArray.getDrawable(R.styleable.CustomImageView_image_src);
         mBitmap = ImageUtil.drawableToBitmap(mDrawable);
+        typedArray.recycle();
 
         mGestureDector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -300,7 +303,7 @@ public class CustomImageView extends View {
         }
 
         checkZoomAndDragEvent(event);
-        if (!mIsScale) { // 多指缩放手指抬起后，才能接受单指涂鸦
+        if (!mIsScale && mPaintColor != 0) { // 多指缩放手指抬起，且设置了画笔颜色，才能接受单指涂鸦
             checkHandWriteEvent(event);
         }
 
@@ -463,7 +466,8 @@ public class CustomImageView extends View {
      * @param color
      */
     public void setPaintColor(int color) {
-        mPaint.setColor(color);
+        mPaintColor = color;
+        mPaint.setColor(mPaintColor);
     }
 
     /**
