@@ -1,10 +1,11 @@
-package com.android.cong.customviewproj.pictureview;
+package com.android.cong.customviewproj.pictureview.custom;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.android.cong.customviewproj.BaseApplication;
 import com.android.cong.customviewproj.R;
+import com.android.cong.customviewproj.pictureview.ImageUtil;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -73,6 +74,7 @@ public class CustomImageView extends View {
     private GestureDetector mGestureDector; // 手势检测
 
     private List<Path> mBufferPathList; // 存储涂鸦的绘制路径
+    private Context mContext;
 
     public CustomImageView(Context context) {
         this(context, null);
@@ -80,6 +82,7 @@ public class CustomImageView extends View {
 
     public CustomImageView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        this.mContext = context;
 
         // 关闭硬件加速，因为bitmap的Canvas不支持硬件加速
         if (Build.VERSION.SDK_INT >= 11) {
@@ -434,6 +437,77 @@ public class CustomImageView extends View {
             invalidate();
         }
 
+    }
+
+    /**
+     * 得到当前编辑过的bitmap
+     *
+     * @return
+     */
+    private Bitmap getEditedBitmap() {
+        Bitmap editedBitmap = Bitmap.createBitmap(mOriginalWidth, mOriginalHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(editedBitmap);
+        canvas.drawBitmap(mBitmap, 0, 0, null);
+
+        for (Path path : mBufferPathList) {
+            canvas.drawPath(path, mPaint);
+        }
+
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.restore();
+
+        return editedBitmap;
+
+    }
+
+    /**
+     * bitmap右下角添加水印
+     *
+     * @param waterMark     水印图片
+     * @param paddingRight  右边距
+     * @param paddingBottom 下边距
+     *
+     * @return
+     */
+    public Bitmap addWaterMarkRightBottom(Bitmap waterMark, int paddingRight, int paddingBottom) {
+        Bitmap srcBitmap = getEditedBitmap();
+        return ImageUtil.createWaterMaskRightBottom(mContext, srcBitmap, waterMark, paddingRight, paddingBottom);
+    }
+
+    /**
+     * 保存涂鸦后的图片，不带水印
+     *
+     * @param filePath
+     * @param listener
+     */
+    public void save(String filePath, OnBitmapSaveListener listener) {
+        Bitmap retBitmap = getEditedBitmap();
+        boolean isSucc = ImageUtil.saveBitmapToFile(retBitmap, filePath);
+        if (isSucc) {
+            listener.onSucc();
+        } else {
+            listener.onFail();
+        }
+    }
+
+    /**
+     * 保存涂鸦后的图片，带水印
+     *
+     * @param filePath
+     * @param waterMark
+     * @param paddingRight
+     * @param paddingBottom
+     * @param listener
+     */
+    public void save(String filePath, Bitmap waterMark, int paddingRight, int paddingBottom,
+                     OnBitmapSaveListener listener){
+        Bitmap retBitmap = addWaterMarkRightBottom(waterMark, paddingRight, paddingBottom);
+        boolean isSucc = ImageUtil.saveBitmapToFile(retBitmap, filePath);
+        if (isSucc) {
+            listener.onSucc();
+        } else {
+            listener.onFail();
+        }
     }
 
     /**
