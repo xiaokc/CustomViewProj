@@ -78,6 +78,8 @@ public class CustomImageView extends View {
     private List<HandDrawPath> mBufferPathList; // 存储涂鸦的绘制路径
     private Context mContext;
 
+    private OnViewClickListener mClickListener; // 点击事件监听
+
     public CustomImageView(Context context) {
         this(context, null);
     }
@@ -354,11 +356,19 @@ public class CustomImageView extends View {
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                // 手指抬起时更新双缓冲画布，以避免撤销时缓冲区画布重绘（视觉上会闪一下）
-                draw(mBufferCanvas, mPaint, mCurrPath);
-                mCurrHandDrawPath = new HandDrawPath(mCurrPath, mPaint.getColor());
-                mBufferPathList.add(mCurrHandDrawPath);
-                mIsPainting = false;
+                if (mTouchDownX == mTouchX && mTouchDownY == mTouchY
+                        && mTouchDownX == mLastTouchX && mTouchDownY == mLastTouchY) { // 点击事件
+                    if (mClickListener != null) {
+                        mClickListener.onViewClick();
+                    }
+
+                } else {
+                    // 手指抬起时更新双缓冲画布，以避免撤销时缓冲区画布重绘（视觉上会闪一下）
+                    draw(mBufferCanvas, mPaint, mCurrPath);
+                    mCurrHandDrawPath = new HandDrawPath(mCurrPath, mPaint.getColor());
+                    mBufferPathList.add(mCurrHandDrawPath);
+                    mIsPainting = false;
+                }
                 break;
         }
     }
@@ -545,6 +555,10 @@ public class CustomImageView extends View {
 
     private float toTransY(float touchY, float scaleCenterY) {
         return -scaleCenterY * (mPrivateScale * mScale) + touchY - mCenterTranY;
+    }
+
+    public void setViewClickListener(OnViewClickListener listener) {
+        this.mClickListener = listener;
     }
 
 }
