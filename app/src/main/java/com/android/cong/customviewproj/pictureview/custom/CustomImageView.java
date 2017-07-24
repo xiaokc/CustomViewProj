@@ -57,6 +57,7 @@ public class CustomImageView extends View {
     private float mTouchDownX, mTouchDownY, mLastTouchX, mLastTouchY, mTouchX, mTouchY;
 
     private Path mCurrPath; // 当前手写的路径
+    private HandDrawPath mCurrHandDrawPath; // 当前手绘路径（封装了画笔颜色）
 
     private final float ONEOFFSET = 1f;
     private int mTouchMode; // 触摸模式，用于判断单点或多点触摸
@@ -73,7 +74,7 @@ public class CustomImageView extends View {
 
     private GestureDetector mGestureDector; // 手势检测
 
-    private List<Path> mBufferPathList; // 存储涂鸦的绘制路径
+    private List<HandDrawPath> mBufferPathList; // 存储涂鸦的绘制路径
     private Context mContext;
 
     public CustomImageView(Context context) {
@@ -245,9 +246,10 @@ public class CustomImageView extends View {
      * @param canvas
      * @param pathList
      */
-    private void draw(Canvas canvas, List<Path> pathList) {
-        for (Path path : pathList) {
-            draw(canvas, mPaint, path);
+    private void draw(Canvas canvas, List<HandDrawPath> pathList) {
+        for (HandDrawPath handDrawPath : pathList) {
+            mPaint.setColor(handDrawPath.getPaintColor());
+            draw(canvas, mPaint, handDrawPath.getPath());
         }
     }
 
@@ -352,7 +354,8 @@ public class CustomImageView extends View {
             case MotionEvent.ACTION_UP:
                 // 手指抬起时更新双缓冲画布，以避免撤销时缓冲区画布重绘（视觉上会闪一下）
                 draw(mBufferCanvas, mPaint, mCurrPath);
-                mBufferPathList.add(mCurrPath);
+                mCurrHandDrawPath = new HandDrawPath(mCurrPath, mPaint.getColor());
+                mBufferPathList.add(mCurrHandDrawPath);
                 mIsPainting = false;
                 break;
         }
@@ -449,8 +452,9 @@ public class CustomImageView extends View {
         Canvas canvas = new Canvas(editedBitmap);
         canvas.drawBitmap(mBitmap, 0, 0, null);
 
-        for (Path path : mBufferPathList) {
-            canvas.drawPath(path, mPaint);
+        for (HandDrawPath handDrawPath : mBufferPathList) {
+            mPaint.setColor(handDrawPath.getPaintColor());
+            canvas.drawPath(handDrawPath.getPath(), mPaint);
         }
 
         canvas.save(Canvas.ALL_SAVE_FLAG);
