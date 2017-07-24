@@ -6,6 +6,7 @@ import java.util.List;
 import com.android.cong.customviewproj.BaseApplication;
 import com.android.cong.customviewproj.R;
 import com.android.cong.customviewproj.pictureview.ImageUtil;
+import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -33,6 +34,9 @@ public class CustomImageView extends View {
     private int mOriginalHeight;
     private float mOriginalPivotX; // 图片中心
     private float mOriginalPivotY;
+
+    private int mDefaultWidth = 300;
+    private int mDefaultHeight = 400;
 
     private Bitmap mBufferBitmap; // 双缓冲Bitmap
     private Canvas mBufferCanvas;
@@ -186,6 +190,38 @@ public class CustomImageView extends View {
 
         invalidate();
 
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+        int width = getSize(ScreenUtil.dipToPx(BaseApplication.getInstance(), mDefaultWidth), widthMeasureSpec);
+        int height = getSize(ScreenUtil.dipToPx(BaseApplication.getInstance(), mDefaultHeight), heightMeasureSpec);
+
+        setMeasuredDimension(width, height);
+    }
+
+    private int getSize(int defaultSize, int measureSpec) {
+        int retSize = defaultSize;
+
+        int mode = MeasureSpec.getMode(measureSpec);
+        int size = MeasureSpec.getSize(measureSpec);
+
+        switch (mode) {
+            case MeasureSpec.UNSPECIFIED: {
+                retSize = defaultSize;
+                break;
+            }
+            case MeasureSpec.AT_MOST: {
+                retSize = size;
+                break;
+            }
+            case MeasureSpec.EXACTLY: {
+                retSize = size;
+                break;
+            }
+        }
+        return retSize;
     }
 
     private void initCanvas() {
