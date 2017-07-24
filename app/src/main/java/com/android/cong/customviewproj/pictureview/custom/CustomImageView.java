@@ -73,6 +73,7 @@ public class CustomImageView extends View {
     private final float MIN_SCALE = 0.75f; // 最小缩放倍数
 
     private GestureDetector mGestureDector; // 手势检测
+    private float mLastScale; // 存放上次缩放比例，便于再次双击时还原
 
     private List<HandDrawPath> mBufferPathList; // 存储涂鸦的绘制路径
     private Context mContext;
@@ -103,9 +104,10 @@ public class CustomImageView extends View {
                 mScaleCenterX = toX(x); // 缩放中心点在图片坐标系上的坐标
                 mScaleCenterY = toY(y);
                 if (mScale < MAX_SCALE) {
+                    mLastScale = mScale; // 记录上次缩放比例
                     mScale = MAX_SCALE;
                 } else if (mScale == MAX_SCALE) {
-                    mScale = MIN_SCALE;
+                    mScale = mLastScale; // 还原
                 }
                 mTransX = toTransX(x, mScaleCenterX); // 计算偏移量
                 mTransY = toTransY(y, mScaleCenterY);
