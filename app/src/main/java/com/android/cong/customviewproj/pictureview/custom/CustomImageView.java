@@ -75,7 +75,7 @@ public class CustomImageView extends View {
             mScaleCenterY, mTouchCenterX, mTouchCenterY; // 双指缩放拖动相关的坐标
 
     private final float MAX_SCALE = 4.0f; // 最大缩放倍数
-    private final float MIN_SCALE = 0.75f; // 最小缩放倍数
+    private final float MIN_SCALE = 1.0f; // 最小缩放倍数
 
     private GestureDetector mGestureDector; // 手势检测
     private float mLastScale; // 存放上次缩放比例，便于再次双击时还原
@@ -348,10 +348,10 @@ public class CustomImageView extends View {
                     mTransX = toTransX(mMoveCenterX, mScaleCenterX); // 使缩放中心点偏移到两指中间的点上
                     mTransY = toTransY(mMoveCenterY, mScaleCenterY);
                     updatePosition();
-                }
+                    invalidate();
+                    mOldDist = mNewDist;
 
-                invalidate();
-                mOldDist = mNewDist;
+                }
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
@@ -556,7 +556,7 @@ public class CustomImageView extends View {
      * @param listener
      */
     public void save(String filePath, Bitmap waterMark, int paddingRight, int paddingBottom,
-                     OnBitmapSaveListener listener){
+                     OnBitmapSaveListener listener) {
         Bitmap retBitmap = addWaterMarkRightBottom(waterMark, paddingRight, paddingBottom);
         boolean isSucc = ImageUtil.saveBitmapToFile(retBitmap, filePath);
         if (isSucc) {
@@ -590,11 +590,11 @@ public class CustomImageView extends View {
      * @return
      */
     private float toTransX(float touchX, float scaleCenterX) {
-        return -scaleCenterX * (mPrivateScale * mScale) + touchX - mCenterTranX;
+        return touchX - mCenterTranX - scaleCenterX * (mPrivateScale * mScale);
     }
 
     private float toTransY(float touchY, float scaleCenterY) {
-        return -scaleCenterY * (mPrivateScale * mScale) + touchY - mCenterTranY;
+        return touchY - mCenterTranY - scaleCenterY * (mPrivateScale * mScale);
     }
 
     public void setViewClickListener(OnViewClickListener listener) {
