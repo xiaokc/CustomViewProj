@@ -22,6 +22,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 
 /**
  * Created by xiaokecong on 21/07/2017.
@@ -187,6 +188,12 @@ public class CustomImageView extends View {
         mCenterTranX = (getWidth() - mPrivateWidth) / 2;
         mCenterTranY = (getHeight() - mPrivateHeight) / 2;
 
+        // 根据图片调整比例设置控件宽高
+        ViewGroup.LayoutParams params = getLayoutParams();
+        params.width = mPrivateWidth;
+        params.height = mPrivateHeight;
+        setLayoutParams(params);
+
         initCanvas();
 
         mPaintSize /= mPrivateScale;
@@ -339,10 +346,6 @@ public class CustomImageView extends View {
 
                         if (mScale < MIN_SCALE) {
                             mScale = MIN_SCALE;
-                        }
-                    } else {
-                        if (mScale == 1.0f) { // 图片没有缩放时，不允许拖动
-                            break;
                         }
                     }
 
@@ -607,6 +610,7 @@ public class CustomImageView extends View {
 
     /**
      * 设置要编辑的图片
+     *
      * @param bitmap
      */
     public void setBitmap(Bitmap bitmap) {
