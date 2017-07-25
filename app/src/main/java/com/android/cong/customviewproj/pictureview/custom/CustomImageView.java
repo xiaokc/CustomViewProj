@@ -340,6 +340,10 @@ public class CustomImageView extends View {
                         if (mScale < MIN_SCALE) {
                             mScale = MIN_SCALE;
                         }
+                    } else {
+                        if (mScale == 1.0f) { // 图片没有缩放时，不允许拖动
+                            break;
+                        }
                     }
 
                     float mMoveCenterX = (event.getX(0) + event.getX(1)) / 2;
@@ -599,6 +603,14 @@ public class CustomImageView extends View {
 
     public void setViewClickListener(OnViewClickListener listener) {
         this.mClickListener = listener;
+    }
+
+    /**
+     * 设置要编辑的图片
+     * @param bitmap
+     */
+    public void setBitmap(Bitmap bitmap) {
+
     }
 
 }
