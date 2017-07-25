@@ -43,7 +43,6 @@ public class CustomImageView extends View {
     private Canvas mBufferCanvas;
     private Paint mPaint;
     private int mPaintSize = 20; // 画笔粗细
-    private int mPaintColor;
 
     private float mScale; // 图片在相对于居中时的缩放倍数 （ 图片真实的缩放倍数为 mPrivateScale*mScale ）
 
@@ -85,6 +84,9 @@ public class CustomImageView extends View {
     private Context mContext;
 
     private OnViewClickListener mClickListener; // 点击事件监听
+
+    private boolean mClickEnable; // 是否接受点击事件
+    private boolean mPaintEnable; // 是否接受涂鸦
 
     public CustomImageView(Context context) {
         this(context, null);
@@ -130,7 +132,7 @@ public class CustomImageView extends View {
             public boolean onDoubleTapEvent(MotionEvent e) {
                 switch (e.getAction()) {
                     case MotionEvent.ACTION_UP:
-                        mIsDoubleTap = false; // 双击手指都抬起时，将双击动作标记为false，以接收单指action_down动作
+                        //                        mIsDoubleTap = false; // 双击手指都抬起时，将双击动作标记为false，以接收单指action_down动作
                         break;
 
                 }
@@ -310,7 +312,7 @@ public class CustomImageView extends View {
         }
 
         checkZoomAndDragEvent(event);
-        if (!mIsScale && mPaintColor != 0) { // 多指缩放手指抬起，且设置了画笔颜色，才能接受单指涂鸦
+        if (!mIsScale) { // 多指缩放手指抬起，且设置了画笔颜色，才能接受单指涂鸦
             checkHandWriteEvent(event);
         }
 
@@ -373,18 +375,17 @@ public class CustomImageView extends View {
      * @param event
      */
     private void checkHandWriteEvent(MotionEvent event) {
-        if (mIsDoubleTap) {
-            return;
-        }
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mTouchDownX = mTouchX = mLastTouchX = event.getX();
                 mTouchDownY = mTouchY = mLastTouchY = event.getY();
 
-                mCurrPath = new Path();
-                mCurrPath.moveTo(toX(mTouchDownX), toY(mTouchDownY));
-                mIsPainting = true;
-                invalidate();
+                if (mPaintEnable && !mIsDoubleTap) {
+                    mCurrPath = new Path();
+                    mCurrPath.moveTo(toX(mTouchDownX), toY(mTouchDownY));
+                    mIsPainting = true;
+                    invalidate();
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 mLastTouchX = mTouchX;
@@ -392,29 +393,38 @@ public class CustomImageView extends View {
                 mTouchX = event.getX();
                 mTouchY = event.getY();
 
-                mCurrPath.quadTo(
-                        toX(mLastTouchX),
-                        toY(mLastTouchY),
-                        toX((mTouchX + mLastTouchX) / 2),
-                        toY((mTouchY + mLastTouchY) / 2));
+                if (mPaintEnable && !mIsDoubleTap) {
+                    mCurrPath.quadTo(
+                            toX(mLastTouchX),
+                            toY(mLastTouchY),
+                            toX((mTouchX + mLastTouchX) / 2),
+                            toY((mTouchY + mLastTouchY) / 2));
 
-                invalidate(); // 调用onDraw()方法绘制path
+                    invalidate(); // 调用onDraw()方法绘制path
+                }
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
+                mLastTouchX = mTouchX;
+                mLastTouchY = mTouchY;
+                mTouchX = event.getX();
+                mTouchY = event.getY();
                 if (mTouchDownX == mTouchX && mTouchDownY == mTouchY
-                        && mTouchDownX == mLastTouchX && mTouchDownY == mLastTouchY) { // 点击事件
-                    if (mClickListener != null) {
+                        && mTouchDownX == mLastTouchX && mTouchDownY == mLastTouchY) {
+                    if (mClickListener != null && mClickEnable && !mIsDoubleTap) { // 点击事件
                         mClickListener.onViewClick();
                     }
 
                 } else {
                     // 手指抬起时更新双缓冲画布，以避免撤销时缓冲区画布重绘（视觉上会闪一下）
-                    draw(mBufferCanvas, mPaint, mCurrPath);
-                    mCurrHandDrawPath = new HandDrawPath(mCurrPath, mPaint.getColor());
-                    mBufferPathList.add(mCurrHandDrawPath);
-                    mIsPainting = false;
+                    if (mPaintEnable) {
+                        draw(mBufferCanvas, mPaint, mCurrPath);
+                        mCurrHandDrawPath = new HandDrawPath(mCurrPath, mPaint.getColor());
+                        mBufferPathList.add(mCurrHandDrawPath);
+                        mIsPainting = false;
+                    }
                 }
+                mIsDoubleTap = false;
                 break;
         }
     }
@@ -473,8 +483,7 @@ public class CustomImageView extends View {
      * @param color
      */
     public void setPaintColor(int color) {
-        mPaintColor = color;
-        mPaint.setColor(mPaintColor);
+        mPaint.setColor(color);
     }
 
     /**
@@ -615,6 +624,14 @@ public class CustomImageView extends View {
      */
     public void setBitmap(Bitmap bitmap) {
 
+    }
+
+    public void setClickEnable(boolean clickEnable) {
+        this.mClickEnable = clickEnable;
+    }
+
+    public void setPaintEnable(boolean paintEnable) {
+        this.mPaintEnable = paintEnable;
     }
 
 }
