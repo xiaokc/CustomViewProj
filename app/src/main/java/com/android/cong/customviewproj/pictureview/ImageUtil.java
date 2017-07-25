@@ -15,6 +15,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.TextUtils;
 
 /**
@@ -255,11 +256,13 @@ public class ImageUtil {
 
     /**
      * 绘制文字到中间
+     *
      * @param context
      * @param bitmap
      * @param text
      * @param size
      * @param color
+     *
      * @return
      */
     public static Bitmap drawTextToBitmapCenter(Context context, Bitmap bitmap, String text,
@@ -309,23 +312,27 @@ public class ImageUtil {
 
     /**
      * drawable 转为 bitmap
+     *
      * @param drawable
+     *
      * @return
      */
-    public static Bitmap drawableToBitmap (Drawable drawable) {
+    public static Bitmap drawableToBitmap(Drawable drawable) {
         Bitmap bitmap = null;
 
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            if(bitmapDrawable.getBitmap() != null) {
+            if (bitmapDrawable.getBitmap() != null) {
                 return bitmapDrawable.getBitmap();
             }
         }
 
-        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
-            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1,
+                    Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
         } else {
-            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888);
         }
 
         Canvas canvas = new Canvas(bitmap);
@@ -336,8 +343,10 @@ public class ImageUtil {
 
     /**
      * 将 bitmap 保存成图片文件
+     *
      * @param bitmap
      * @param filePath
+     *
      * @return
      */
     public static boolean saveBitmapToFile(Bitmap bitmap, String filePath) {
@@ -346,7 +355,7 @@ public class ImageUtil {
             try {
 
                 if (TextUtils.isEmpty(filePath)) {
-                    filePath = "/sdcard/" + SystemClock.currentThreadTimeMillis() +".png";
+                    filePath = "/sdcard/" + SystemClock.currentThreadTimeMillis() + ".png";
                 }
                 file = new File(filePath);
 
@@ -373,6 +382,24 @@ public class ImageUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * 使用tint方法将drawable换成指定颜色
+     *
+     * @param oriDrawable
+     * @param tintColor
+     *
+     * @return
+     */
+    public static Drawable tintDrawable(Drawable oriDrawable, int tintColor) {
+        if (null == oriDrawable) {
+            return oriDrawable;
+        }
+        Drawable drawable = DrawableCompat.wrap(oriDrawable);
+        drawable.mutate();
+        DrawableCompat.setTint(drawable, tintColor);
+        return drawable;
     }
 
 }
