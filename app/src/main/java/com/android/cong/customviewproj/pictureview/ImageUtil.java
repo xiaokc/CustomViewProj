@@ -8,6 +8,7 @@ import java.io.IOException;
 import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -384,22 +385,29 @@ public class ImageUtil {
         return false;
     }
 
-    /**
-     * 使用tint方法将drawable换成指定颜色
-     *
-     * @param oriDrawable
-     * @param tintColor
-     *
-     * @return
-     */
-    public static Drawable tintDrawable(Drawable oriDrawable, int tintColor) {
+
+    public static Drawable tintDrawable(Drawable oriDrawable, ColorStateList tintList) {
         if (null == oriDrawable) {
             return oriDrawable;
         }
-        Drawable drawable = DrawableCompat.wrap(oriDrawable);
-        drawable.mutate();
-        DrawableCompat.setTint(drawable, tintColor);
+        Drawable newDrawable = oriDrawable.getConstantState().newDrawable();
+        Drawable d = newDrawable.mutate();
+        Drawable drawable = DrawableCompat.wrap(d);
+        DrawableCompat.setTintList(drawable, tintList);
         return drawable;
     }
+
+    public static Drawable tintDrawable(Drawable originalDrawable, int tintColor){
+        try {
+            Drawable d = originalDrawable.getConstantState().newDrawable();
+            Drawable dd = d.mutate();
+            Drawable wrappedDrawable = DrawableCompat.wrap(dd);
+            DrawableCompat.setTint(wrappedDrawable, tintColor);
+            return wrappedDrawable;
+        }catch (Exception e){
+            return originalDrawable;
+        }
+    }
+
 
 }
