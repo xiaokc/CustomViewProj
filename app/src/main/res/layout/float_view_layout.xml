@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.cong.customviewproj.screenocr.FloatViewLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="50dp"
+    android:layout_height="50dp">
+
+    <RelativeLayout
+        android:id="@+id/rl_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_background"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/background_float_view"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/center_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLength="2"
+                android:textColor="#2274e6"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+                android:id="@+id/rl_foreground"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true">
+
+            <View
+                    android:id="@+id/foreground_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_float_view"/>
+
+            <com.android.cong.customviewproj.roundview.FloatRoundImageView
+                    android:id="@+id/center_img_round"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="7dp"
+                    android:visibility="gone"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:maxWidth="50dp"
+                    android:maxHeight="50dp"/>
+
+            <ImageView
+                    android:id="@+id/center_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="1dp"
+                    android:scaleType="centerInside"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</com.android.cong.customviewproj.screenocr.FloatViewLayout>

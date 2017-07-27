@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ATDragView">
+        <attr name="seek_bg_color" format="color"/>
+        <attr name="seek_pb_color" format="color"/>
+        <attr name="seek_ball_solid_color" format="color"/>
+        <attr name="seek_ball_stroke_color" format="color"/>
+        <attr name="seek_text_color" format="color"/>
+        <attr name="seek_text_size" format="dimension"/>
+    </declare-styleable>
+
+    <!--float view group-->
+    <attr name="position">
+        <enum name="left_top" value="0"/>
+        <enum name="right_top" value="1"/>
+        <enum name="right_bottom" value="2"/>
+        <enum name="left_bottom" value="3"/>
+    </attr>
+    <attr name="radius" format="dimension"></attr>
+
+    <declare-styleable name="FloatViewGroup">
+        <attr name="position"/>
+        <attr name="radius"/>
+    </declare-styleable>
+
+
+    <!--ArcMenu-->
+    <attr name="fromDegrees" format="float|reference"/>
+    <attr name="toDegrees" format="float|reference"/>
+    <attr name="childSize" format="dimension|reference"/>
+    <declare-styleable name="ArcLayout">
+        <attr name="fromDegrees"/>
+        <attr name="toDegrees"/>
+        <attr name="childSize"/>
+    </declare-styleable>
+    <declare-styleable name="ArcMenu">
+        <attr name="fromDegrees"/>
+        <attr name="toDegrees"/>
+        <attr name="childSize"/>
+    </declare-styleable>
+
+    <!--TuyaScaleView-->
+    <declare-styleable name="TuyaScaleView">
+        <attr name="src" format="integer"/>
+    </declare-styleable>
+
+    <!--CustomImageView-->
+    <declare-styleable name="CustomImageView">
+        <attr name="image_src" format="integer"/>
+    </declare-styleable>
+
+
+    <!--图片查看底部的toolbar tabview-->
+    <declare-styleable name="ToolbarTabView">
+        <attr name="text" format="string"/>
+        <attr name="textDefaultColor" format="color|integer"/>
+        <attr name="textTouchDownColor" format="color|integer"/>
+        <attr name="imageSrc" format="integer"/>
+    </declare-styleable>
+
+    <!--颜色选择条上的每个颜色块 ColorCubView-->
+    <declare-styleable name="ColorCubView">
+        <attr name="cubBackground" format="color|integer"/>
+        <attr name="cubTagSrc" format="integer"/>
+        <attr name="cubTagVisible" format="boolean"/>
+    </declare-styleable>
+
+</resources>
