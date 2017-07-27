@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 /**
  * Created by xiaokecong on 26/07/2017.
@@ -109,10 +110,7 @@ public class OcrHistoryManager {
             @Override
             public void onItemCardClick(String itemPath) {
                 Log.i(TAG, "点击了history item, path:" + itemPath);
-                Intent intent = new Intent(mContext, ShowAndEditActivity.class);
-                intent.putExtra("path", itemPath);
-                intent.putExtra("isShow", true);
-                mContext.startActivity(intent);
+                startActivity(itemPath, true);
             }
         });
 
@@ -122,16 +120,17 @@ public class OcrHistoryManager {
                 if (view instanceof ToolbarTabView) {
                     switch (view.getId()) {
                         case R.id.tab_edit:
-                            Log.i(TAG, "点击了编辑,path:" + itemPath);
+                            startActivity(itemPath, true);
                             break;
                         case R.id.tab_share:
-                            Log.i(TAG, "点击了分享,path:" + itemPath);
+                            Toast.makeText(mContext, "分享:" + itemPath, Toast.LENGTH_LONG).show();
                             break;
                         case R.id.tab_ocr:
-                            Log.i(TAG, "点击了ocr,path:" + itemPath);
+                            Toast.makeText(mContext, "Ocr:" + itemPath, Toast.LENGTH_LONG).show();
                             break;
                         case R.id.tab_delete:
                             Log.i(TAG, "点击了删除,path:" + itemPath);
+                            handleDeleteEvent(itemPath);
                             break;
                     }
                 }
@@ -232,6 +231,37 @@ public class OcrHistoryManager {
 
     public void setOcrHistoryManagerCallback(OcrHistoryManagerCallback managerCallback) {
         this.mManagerCallback = managerCallback;
+    }
+
+    /**
+     * 界面跳转
+     *
+     * @param itemPath
+     * @param isShow
+     */
+    private void startActivity(String itemPath, boolean isShow) {
+        Intent intent = new Intent(mContext, ShowAndEditActivity.class);
+        intent.putExtra("imagePath", itemPath);
+        intent.putExtra("isShow", isShow);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * 处理item的删除事件
+     *
+     * @param itemPath
+     */
+    private void handleDeleteEvent(String itemPath) {
+        boolean deleteSucc = mOcrDb.deleteItemWithPath(itemPath);
+        if (deleteSucc) {
+            Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    loadData();
+                }
+            });
+        }
     }
 
 }

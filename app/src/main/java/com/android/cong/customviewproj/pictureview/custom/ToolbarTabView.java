@@ -64,6 +64,7 @@ public class ToolbarTabView extends LinearLayout {
         mImageView = (ImageView) findViewById(R.id.iv_tab);
         mTextView = (TextView) findViewById(R.id.tv_tab);
 
+        mTextView.setText(mText);
         mTextView.setTextColor(mTextDefaultColor);
         mImageView.setImageDrawable(mDefaultDrawable);
     }
@@ -76,7 +77,7 @@ public class ToolbarTabView extends LinearLayout {
         mImageView.setImageDrawable(drawable);
     }
 
-    public void setTouchdDownColor(int color) {
+    public void setTouchDownColor(int color) {
         mTextView.setTextColor(color);
         Drawable touchDownDrawable = ImageUtil.tintDrawable(mDefaultDrawable, color);
         mImageView.setImageDrawable(touchDownDrawable);

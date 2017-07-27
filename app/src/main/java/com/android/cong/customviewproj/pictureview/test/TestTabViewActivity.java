@@ -40,7 +40,7 @@ public class TestTabViewActivity extends Activity implements View.OnClickListene
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
 //                updateTouchDownColor(v);
-                ((ToolbarTabView)v).setTouchdDownColor(Color.parseColor("#2274e6"));
+                ((ToolbarTabView)v).setTouchDownColor(Color.parseColor("#2274e6"));
                 break;
             case MotionEvent.ACTION_UP:
 //                resetDefaultColor();
@@ -53,7 +53,7 @@ public class TestTabViewActivity extends Activity implements View.OnClickListene
     private void updateTouchDownColor(View view) {
         switch (view.getId()) {
             case R.id.tab_edit:
-                tabEdit.setTouchdDownColor(Color.parseColor("#2274e6"));
+                tabEdit.setTouchDownColor(Color.parseColor("#2274e6"));
                 break;
         }
     }

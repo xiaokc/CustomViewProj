@@ -1,5 +1,6 @@
 package com.android.cong.customviewproj.pictureview.custom;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -14,11 +15,14 @@ import com.android.cong.customviewproj.screenocr.ScreenUtil;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +66,9 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private Map<Integer, Integer> colorViewMap; // 编辑toolbar上的色块，key: 色块resId,value: 对应色块对勾的resId
 
     private OcrDbHelper mOcrDb;
+    private Intent intent;
+    private boolean isShowImage; // true-查看图片，false-编辑图片
+    private String imagePath;
 
     private final int DEFAULT_TEXT_COLOR = Color.parseColor("#99000000");
     private final int TOUCH_DOWN_COLOR = Color.parseColor("#2274e6");
@@ -74,11 +81,15 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         initView();
 
         initEvent();
+
+        handleGetIntent();
     }
 
     private void initView() {
         customImageView = (CustomImageView) findViewById(R.id.iv_image);
         customImageView.setClickEnable(true);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.img_weibo);
+        customImageView.setBitmap(bitmap);
 
         layoutRevoke = (RelativeLayout) findViewById(R.id.layout_revoke);
 
@@ -156,6 +167,28 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         ivColorPurple.setOnClickListener(this);
     }
 
+    private void handleGetIntent() {
+        intent = getIntent();
+        if (intent != null) {
+            imagePath = intent.getStringExtra("imagePath");
+            isShowImage = intent.getBooleanExtra("isShow", true);
+        }
+
+        if (!isShowImage) { // 编辑图片
+            changeEditToolbar();
+        }
+
+        if (!TextUtils.isEmpty(imagePath)) {
+            File file = new File(imagePath);
+            if (file.exists()) {
+                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                customImageView.setBitmap(bitmap);
+            }
+        }
+
+
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -171,7 +204,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
                 Toast.makeText(this, "ocr", Toast.LENGTH_LONG).show();
                 break;
             case R.id.tab_delete:
-                Toast.makeText(this, "delete", Toast.LENGTH_LONG).show();
+                handleDeleteEvent();
                 break;
 
             case R.id.btn_revoke:
@@ -226,7 +259,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: // 手指按下的时候
-                ((ToolbarTabView) v).setTouchdDownColor(TOUCH_DOWN_COLOR);
+                ((ToolbarTabView) v).setTouchDownColor(TOUCH_DOWN_COLOR);
                 break;
             case MotionEvent.ACTION_UP:
                 ((ToolbarTabView) v).setDefaultColor(DEFAULT_TEXT_COLOR);
@@ -317,6 +350,16 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         });
 
         insertItemToDb(path, time);
+    }
+
+    private void handleDeleteEvent() {
+        boolean deleteSucc = mOcrDb.deleteItemWithPath(imagePath);
+        if (deleteSucc) {
+            Toast.makeText(this,"删除成功",Toast.LENGTH_LONG).show();
+            finish();
+        } else {
+            Toast.makeText(this,"删除失败",Toast.LENGTH_LONG).show();
+        }
     }
 
     /**

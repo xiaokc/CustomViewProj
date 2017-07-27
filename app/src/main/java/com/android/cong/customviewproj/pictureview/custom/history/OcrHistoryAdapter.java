@@ -150,7 +150,7 @@ public class OcrHistoryAdapter extends RecyclerView.Adapter<OcrHistoryBaseViewHo
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                ((ToolbarTabView) v).setTouchdDownColor(TOUCH_DOWN_COLOR);
+                ((ToolbarTabView) v).setTouchDownColor(TOUCH_DOWN_COLOR);
                 break;
             case MotionEvent.ACTION_UP:
                 ((ToolbarTabView) v).setDefaultColor(DEFAULT_TEXT_COLOR);

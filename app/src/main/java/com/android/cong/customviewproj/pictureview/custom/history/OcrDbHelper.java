@@ -134,16 +134,18 @@ public class OcrDbHelper extends SQLiteOpenHelper {
      *
      * @param path
      */
-    public void deleteItemWithPath(String path) {
-        if (!TextUtils.isEmpty(path)) {
-            return;
+    public boolean deleteItemWithPath(String path) {
+        if (TextUtils.isEmpty(path)) {
+            return false;
         }
         try {
             String[] args = {path};
             mOcrDb.delete(TABLE_NAME, FIELD_FILE_PATH + "=?", args);
+            return true;
         } catch (Exception e) {
             Log.e(TAG, "delete item with path error,path:" + path);
             e.printStackTrace();
+            return false;
         }
     }
 

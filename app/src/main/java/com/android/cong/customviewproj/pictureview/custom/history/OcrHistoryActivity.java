@@ -74,4 +74,10 @@ public class OcrHistoryActivity extends Activity {
         }
         return dataList;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mOcrHistoryManager.loadData();
+    }
 }
