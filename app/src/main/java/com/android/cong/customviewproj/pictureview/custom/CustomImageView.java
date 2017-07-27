@@ -198,7 +198,8 @@ public class CustomImageView extends View {
 
         initCanvas();
 
-        mPaintSize /= mPrivateScale;
+        // 画笔粗细恒定，不再随着原始缩放比例改变
+//        mPaintSize /= mPrivateScale;
 
         invalidate();
 
@@ -623,7 +624,8 @@ public class CustomImageView extends View {
      * @param bitmap
      */
     public void setBitmap(Bitmap bitmap) {
-
+        mBitmap = bitmap;
+        init();
     }
 
     public void setClickEnable(boolean clickEnable) {
