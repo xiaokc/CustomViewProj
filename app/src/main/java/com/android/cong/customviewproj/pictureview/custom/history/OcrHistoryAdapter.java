@@ -152,6 +152,7 @@ public class OcrHistoryAdapter extends RecyclerView.Adapter<OcrHistoryBaseViewHo
             case MotionEvent.ACTION_DOWN:
                 ((ToolbarTabView) v).setTouchDownColor(TOUCH_DOWN_COLOR);
                 break;
+            case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 ((ToolbarTabView) v).setDefaultColor(DEFAULT_TEXT_COLOR);
                 break;
