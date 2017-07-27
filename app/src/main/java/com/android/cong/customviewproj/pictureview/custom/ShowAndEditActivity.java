@@ -6,29 +6,36 @@ import java.util.Map;
 
 import com.android.cong.customviewproj.R;
 import com.android.cong.customviewproj.pictureview.ImageUtil;
+import com.android.cong.customviewproj.pictureview.custom.history.OcrDbHelper;
+import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryActivity;
+import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryItem;
+import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryManager;
 import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
  * Created by xiaokecong on 25/07/2017.
  */
 
-public class ShowAndEditActivity extends Activity implements View.OnClickListener {
+public class ShowAndEditActivity extends Activity implements View.OnClickListener, View.OnTouchListener {
     private CustomImageView customImageView;
 
     private RelativeLayout layoutRevoke; // 撤销的view
@@ -40,6 +47,16 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private LinearLayout llShowShare;
     private LinearLayout llShowOcr;
     private LinearLayout llShowDelete;
+
+    private ImageView ivShowEdit;
+    private ImageView ivShowShare;
+    private ImageView ivShowOcr;
+    private ImageView ivShowDelete;
+
+    private TextView tvShowEdit;
+    private TextView tvShowShare;
+    private TextView tvShowOcr;
+    private TextView tvShowDelete;
 
     private Button btnSave;
     private ImageView ivEditClose;
@@ -55,7 +72,13 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private ImageView ivColorBlue;
     private ImageView ivColorPurple;
 
-    private Map<Integer, Integer> viewMap;
+    private Map<Integer, Integer> colorViewMap; // 编辑toolbar上的色块，key: 色块resId,value: 对应色块对勾的resId
+
+    private OcrDbHelper mOcrDb;
+
+    private final Drawable[] ORIGINAL_TAB_DRAWABLES = new Drawable[4];
+    private final int DEFAULT_TEXT_COLOR = Color.parseColor("#99000000");
+    private final int TOUCH_DOWN_COLOR = Color.parseColor("#2274e6");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,6 +104,16 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         llShowOcr = (LinearLayout) findViewById(R.id.ll_show_ocr);
         llShowDelete = (LinearLayout) findViewById(R.id.ll_show_delete);
 
+        ivShowEdit = (ImageView) findViewById(R.id.iv_show_edit);
+        ivShowShare = (ImageView) findViewById(R.id.iv_show_share);
+        ivShowOcr = (ImageView) findViewById(R.id.iv_show_ocr);
+        ivShowDelete = (ImageView) findViewById(R.id.iv_show_delete);
+
+        tvShowEdit = (TextView) findViewById(R.id.tv_show_edit);
+        tvShowShare = (TextView) findViewById(R.id.tv_show_share);
+        tvShowOcr = (TextView) findViewById(R.id.tv_show_ocr);
+        tvShowDelete = (TextView) findViewById(R.id.tv_show_delete);
+
         btnRevoke = (ImageView) findViewById(R.id.btn_revoke);
         btnSave = (Button) findViewById(R.id.btn_edit_save);
         ivEditClose = (ImageView) findViewById(R.id.iv_edit_close);
@@ -95,19 +128,27 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         ivColorBlue = (ImageView) findViewById(R.id.iv_color_blue);
         ivColorPurple = (ImageView) findViewById(R.id.iv_color_purple);
 
-        viewMap = new HashMap<>();
-        viewMap.put(R.id.iv_color_white, R.id.iv_color_white_tag);
-        viewMap.put(R.id.iv_color_black, R.id.iv_color_black_tag);
-        viewMap.put(R.id.iv_color_red, R.id.iv_color_red_tag);
-        viewMap.put(R.id.iv_color_orange, R.id.iv_color_orange_tag);
-        viewMap.put(R.id.iv_color_yellow, R.id.iv_color_yellow_tag);
-        viewMap.put(R.id.iv_color_green, R.id.iv_color_green_tag);
-        viewMap.put(R.id.iv_color_blue, R.id.iv_color_blue_tag);
-        viewMap.put(R.id.iv_color_purple, R.id.iv_color_purple_tag);
+        colorViewMap = new HashMap<>();
+        colorViewMap.put(R.id.iv_color_white, R.id.iv_color_white_tag);
+        colorViewMap.put(R.id.iv_color_black, R.id.iv_color_black_tag);
+        colorViewMap.put(R.id.iv_color_red, R.id.iv_color_red_tag);
+        colorViewMap.put(R.id.iv_color_orange, R.id.iv_color_orange_tag);
+        colorViewMap.put(R.id.iv_color_yellow, R.id.iv_color_yellow_tag);
+        colorViewMap.put(R.id.iv_color_green, R.id.iv_color_green_tag);
+        colorViewMap.put(R.id.iv_color_blue, R.id.iv_color_blue_tag);
+        colorViewMap.put(R.id.iv_color_purple, R.id.iv_color_purple_tag);
+
+        // TODO: tint会改变drawable
+        ORIGINAL_TAB_DRAWABLES[0] = getResources().getDrawable(R.drawable.toolbar_edit).mutate();
+        ORIGINAL_TAB_DRAWABLES[1] = getResources().getDrawable(R.drawable.toolbar_share).mutate();
+        ORIGINAL_TAB_DRAWABLES[2] = getResources().getDrawable(R.drawable.toolbar_ocr).mutate();
+        ORIGINAL_TAB_DRAWABLES[3] = getResources().getDrawable(R.drawable.toolbar_delete).mutate();
 
     }
 
     private void initEvent() {
+        mOcrDb = OcrDbHelper.getInstance();
+
         customImageView.setClickEnable(true);
         customImageView.setViewClickListener(new OnViewClickListener() {
             @Override
@@ -124,6 +165,11 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         llShowShare.setOnClickListener(this);
         llShowOcr.setOnClickListener(this);
         llShowDelete.setOnClickListener(this);
+
+        llShowEdit.setOnTouchListener(this);
+        llShowShare.setOnTouchListener(this);
+        llShowOcr.setOnTouchListener(this);
+        llShowDelete.setOnTouchListener(this);
 
         btnRevoke.setOnClickListener(this);
         btnSave.setOnClickListener(this);
@@ -205,8 +251,69 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
 
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: // 手指按下的时候
+                updateTouchDownColor(v);
+                break;
+            case MotionEvent.ACTION_UP:
+                resetShowTabColor();
+                break;
+        }
+        return false;
+    }
+
+    /**
+     * 更新图片查看toolbar上被按下的tab颜色
+     *
+     * @param view
+     */
+    private void updateTouchDownColor(View view) {
+        switch (view.getId()) {
+            case R.id.ll_show_edit:
+                ivShowEdit.setImageDrawable(ImageUtil.tintDrawable(ORIGINAL_TAB_DRAWABLES[0], TOUCH_DOWN_COLOR));
+                tvShowEdit.setTextColor(TOUCH_DOWN_COLOR);
+                break;
+            case R.id.ll_show_share:
+                ivShowShare.setImageDrawable(ImageUtil.tintDrawable(ORIGINAL_TAB_DRAWABLES[1], TOUCH_DOWN_COLOR));
+                tvShowShare.setTextColor(TOUCH_DOWN_COLOR);
+                break;
+            case R.id.ll_show_ocr:
+                ivShowOcr.setImageDrawable(ImageUtil.tintDrawable(ORIGINAL_TAB_DRAWABLES[2], TOUCH_DOWN_COLOR));
+                tvShowOcr.setTextColor(TOUCH_DOWN_COLOR);
+                break;
+            case R.id.ll_show_delete:
+                ivShowDelete.setImageDrawable(ImageUtil.tintDrawable(ORIGINAL_TAB_DRAWABLES[3], TOUCH_DOWN_COLOR));
+                tvShowDelete.setTextColor(TOUCH_DOWN_COLOR);
+                break;
+        }
+    }
+
+    /**
+     * 手指抬起后，重置tab的图片颜色和字体颜色
+     */
+    private void resetShowTabColor() {
+        ivShowEdit.setImageDrawable(ORIGINAL_TAB_DRAWABLES[0]);
+        ivShowShare.setImageDrawable(ORIGINAL_TAB_DRAWABLES[1]);
+        ivShowOcr.setImageDrawable(ORIGINAL_TAB_DRAWABLES[2]);
+        ivShowDelete.setImageDrawable(ORIGINAL_TAB_DRAWABLES[3]);
+
+        tvShowEdit.setTextColor(DEFAULT_TEXT_COLOR);
+        tvShowShare.setTextColor(DEFAULT_TEXT_COLOR);
+        tvShowOcr.setTextColor(DEFAULT_TEXT_COLOR);
+        tvShowDelete.setTextColor(DEFAULT_TEXT_COLOR);
+    }
+
+    /**
+     * 更新颜色块选中后的toolbar状态
+     * 选中的色块，宽高为35dp，色块上的对勾图片可见
+     * 非选中色块，宽高为30dp，色块上的对勾图片不可见
+     *
+     * @param selectedViewId
+     */
     private void updateColorToolbar(int selectedViewId) {
-        Iterator iterator = viewMap.entrySet().iterator();
+        Iterator iterator = colorViewMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry) iterator.next();
             int viewId = (Integer) entry.getKey();
@@ -264,7 +371,9 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     }
 
     private void handleSaveEvent() {
-        customImageView.save("/sdcard/" + System.currentTimeMillis() + ".png", new OnBitmapSaveListener() {
+        long time = System.currentTimeMillis();
+        String path = "/sdcard/" + time + ".png";
+        customImageView.save(path, new OnBitmapSaveListener() {
             @Override
             public void onSucc() {
                 Toast.makeText(ShowAndEditActivity.this, "保存成功！", Toast.LENGTH_LONG).show();
@@ -276,6 +385,23 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
                 Toast.makeText(ShowAndEditActivity.this, "保存失败！", Toast.LENGTH_LONG).show();
             }
         });
+
+        insertItemToDb(path,time);
+    }
+
+    /**
+     * 保存的图片插入数据库
+     * @param path
+     * @param time
+     */
+    private void insertItemToDb(String path, long time) {
+        mOcrDb.open();
+        OcrHistoryItem item = new OcrHistoryItem();
+        item.setPath(path);
+        item.setLastModifiedTime(time);
+        mOcrDb.insertOneItem(item);
+        mOcrDb.close();
+
     }
 
     private void handleShareEvent() {
@@ -306,6 +432,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         customImageView.setPaintEnable(false);
     }
 
+    // toolbar 切换至 toolbar_edit_image
     private void changeEditToolbar() {
         layoutToolbarShowImage.setVisibility(View.GONE);
         layoutToolbarEditImage.setVisibility(View.VISIBLE);

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:gravity="center"
+              android:layout_centerInParent="true"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <com.android.cong.customviewproj.pictureview.custom.ColorCubView
+            xmlns:colorcub="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cub_white"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            colorcub:cubBackground="@drawable/btn_color_white"
+            colorcub:cubTagSrc="@drawable/img_ocr_checkmark30"
+            colorcub:cubTagVisible="false"
+            android:clickable="true"
+
+    />
+    <com.android.cong.customviewproj.pictureview.custom.ColorCubView
+            xmlns:colorcub="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cub_black"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            colorcub:cubBackground="@drawable/btn_color_black"
+            colorcub:cubTagSrc="@drawable/img_ocr_checkmark30"
+            colorcub:cubTagVisible="false"
+            android:clickable="true"
+
+    />
+
+    <com.android.cong.customviewproj.pictureview.custom.ColorCubView
+            xmlns:colorcub="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cub_red"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            colorcub:cubBackground="@drawable/btn_color_red"
+            colorcub:cubTagSrc="@drawable/img_ocr_checkmark30"
+            android:clickable="true"
+            colorcub:cubTagVisible="false"
+
+    />
+
+
+
+
+
+
+</LinearLayout>

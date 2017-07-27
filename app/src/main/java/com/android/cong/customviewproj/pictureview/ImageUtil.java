@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
@@ -15,6 +16,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.os.SystemClock;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.TextUtils;
@@ -385,7 +387,6 @@ public class ImageUtil {
         return false;
     }
 
-
     public static Drawable tintDrawable(Drawable oriDrawable, ColorStateList tintList) {
         if (null == oriDrawable) {
             return oriDrawable;
@@ -397,17 +398,52 @@ public class ImageUtil {
         return drawable;
     }
 
-    public static Drawable tintDrawable(Drawable originalDrawable, int tintColor){
+    public static Drawable tintDrawable(Drawable originalDrawable, int tintColor) {
         try {
             Drawable d = originalDrawable.getConstantState().newDrawable();
             Drawable dd = d.mutate();
             Drawable wrappedDrawable = DrawableCompat.wrap(dd);
             DrawableCompat.setTint(wrappedDrawable, tintColor);
             return wrappedDrawable;
-        }catch (Exception e){
+        } catch (Exception e) {
             return originalDrawable;
         }
     }
 
+    /**
+     * 获取图片的大小和宽高
+     * eg:1.27MB/600*800
+     *
+     * @param bitmap
+     *
+     * @return
+     */
+    public static String getSizeStr(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float size = bitmap.getRowBytes() * bitmap.getHeight();
+        DecimalFormat format = new DecimalFormat(".00");
+        String sizeStr;
+        if (size > 1024 * 1024) {
+
+            sizeStr = format.format(size / 1024 / 1024) + "MB";
+        } else if (size > 1024) {
+            sizeStr = format.format(size / 1024) + "KB";
+        } else {
+            sizeStr = format.format(size) + "B";
+        }
+        return sizeStr + "/" + width + "*" + height;
+    }
+
+    /**
+     * 获取图片缩略图（指定宽高）
+     * @param bitmap
+     * @param widthPx
+     * @param heightPx
+     * @return
+     */
+    public static Bitmap getBitmapThumb(Bitmap bitmap, int widthPx, int heightPx) {
+        return ThumbnailUtils.extractThumbnail(bitmap, 200, 200);
+    }
 
 }

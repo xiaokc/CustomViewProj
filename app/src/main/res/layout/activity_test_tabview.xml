@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="60dp">
+
+    <com.android.cong.customviewproj.pictureview.custom.ToolbarTabView
+            xmlns:tabview="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tab_edit"
+            android:clickable="true"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            tabview:imageSrc="@drawable/toolbar_edit"
+            tabview:textDefaultColor="@color/c_99000000"
+            tabview:text="Edit"
+    />
+
+    <com.android.cong.customviewproj.pictureview.custom.ToolbarTabView
+            xmlns:tabview="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tab_share"
+            android:clickable="true"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            tabview:imageSrc="@drawable/toolbar_share"
+            tabview:textDefaultColor="@color/c_99000000"
+            tabview:text="Share"
+    />
+
+    <com.android.cong.customviewproj.pictureview.custom.ToolbarTabView
+            xmlns:tabview="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tab_ocr"
+            android:clickable="true"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            tabview:imageSrc="@drawable/toolbar_ocr"
+            tabview:textDefaultColor="@color/c_99000000"
+            tabview:text="Ocr"
+    />
+    <com.android.cong.customviewproj.pictureview.custom.ToolbarTabView
+            xmlns:tabview="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tab_delete"
+            android:clickable="true"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            tabview:imageSrc="@drawable/toolbar_delete"
+            tabview:textDefaultColor="@color/c_99000000"
+            tabview:text="Delete"
+    />
+
+
+</LinearLayout>

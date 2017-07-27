@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <!--<RelativeLayout-->
+            <!--android:id="@+id/title"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/duswipe_title_height"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:background="@drawable/title_bar_bg"-->
+            <!--android:orientation="horizontal" >-->
+
+        <!--<ImageView-->
+                <!--android:id="@+id/title_left_button"-->
+                <!--android:layout_width="@dimen/duswipe_title_button_width"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:background="@drawable/title_bar_left_button"-->
+                <!--android:scaleType="center"-->
+                <!--android:src="@drawable/title_bar_button_back" />-->
+
+        <!--<TextView-->
+                <!--android:id="@+id/middle_text"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginRight="@dimen/duswipe_title_button_width"-->
+                <!--android:layout_toRightOf="@id/title_left_button"-->
+                <!--android:ellipsize="marquee"-->
+                <!--android:focusable="true"-->
+                <!--android:focusableInTouchMode="true"-->
+                <!--android:gravity="center"-->
+                <!--android:marqueeRepeatLimit="marquee_forever"-->
+                <!--android:singleLine="true"-->
+                <!--android:text="@string/du_swipe_settting_title"-->
+                <!--android:textAppearance="@style/font_main_title"-->
+                <!--android:textStyle="bold" />-->
+
+        <!--<ImageView-->
+                <!--android:id="@+id/title_right_button"-->
+                <!--android:layout_width="@dimen/duswipe_title_button_width"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:background="@drawable/title_bar_right_button"-->
+                <!--android:scaleType="center"-->
+                <!--android:src="@drawable/du_swipe_icon_feedback" />-->
+    <!--</RelativeLayout>-->
+
+</LinearLayout>

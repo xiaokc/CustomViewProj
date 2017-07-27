@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+    <LinearLayout
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+        <LinearLayout
+                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:id="@+id/ll_show_edit"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_toolbar_tab"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:id="@+id/iv_show_edit"
+                    android:layout_gravity="center"
+                    android:src="@drawable/toolbar_edit"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
+
+            <TextView
+                    android:id="@+id/tv_show_edit"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Edit"
+                    android:textSize="10dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/c_99000000"
+
+            />
+
+            <!--<com.android.cong.customviewproj.pictureview.custom.ToolbarTabView-->
+                    <!--xmlns:tabview="http://schemas.android.com/apk/res-auto"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--tabview:imageSrc="@drawable/toolbar_edit"-->
+                    <!--tabview:textDefaultColor="@color/c_99000000"-->
+                    <!--tabview:text="Edit"-->
+            <!--&gt;-->
+
+            <!--</com.android.cong.customviewproj.pictureview.custom.ToolbarTabView>-->
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:id="@+id/ll_show_share"
+                android:background="@drawable/btn_toolbar_tab"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:id="@+id/iv_show_share"
+                    android:layout_gravity="center"
+                    android:src="@drawable/toolbar_share"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
+
+            <TextView
+                    android:id="@+id/tv_show_share"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Share"
+                    android:textSize="10dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/c_99000000"
+
+            />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:id="@+id/ll_show_ocr"
+                android:background="@drawable/btn_toolbar_tab"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:id="@+id/iv_show_ocr"
+                    android:layout_gravity="center"
+                    android:src="@drawable/toolbar_ocr"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
+
+            <TextView
+                    android:id="@+id/tv_show_ocr"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Ocr"
+                    android:textSize="10dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/c_99000000"
+
+            />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:id="@+id/ll_show_delete"
+                android:background="@drawable/btn_toolbar_tab"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:id="@+id/iv_show_delete"
+                    android:layout_gravity="center"
+                    android:src="@drawable/toolbar_delete"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
+
+            <TextView
+                    android:id="@+id/tv_show_delete"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Delete"
+                    android:textSize="10dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/c_99000000"
+
+            />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

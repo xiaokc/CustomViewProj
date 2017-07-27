@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <!--<com.android.cong.customviewproj.pictureview.tuya.TuyaImageView-->
+            <!--android:id="@+id/iv_tuya"-->
+            <!--android:src="@drawable/filter_icon"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:scaleType="center"-->
+            <!--android:layout_centerInParent="true"-->
+    <!--/>-->
+
+    <com.android.cong.customviewproj.pictureview.scaleupdown.ScaleImageView
+            android:id="@+id/iv_scale"
+            android:src="@drawable/filter_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+    />
+
+    <Button
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/btn_drop"
+            android:text="撤销"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:id="@+id/btn_clear"
+            android:text="清屏"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btn_save"
+            android:text="保存"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+</RelativeLayout>

@@ -3,4 +3,42 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="c_ffffff">#ffffff</color>
+    <color name="c_c9c9c9">#c9c9c9</color>
+
+    <color name="c_333333">#333333</color>
+    <color name="c_000000">#000000</color>
+
+    <color name="c_ff3440">#ff3440</color>
+    <color name="c_cc2934">#cc2934</color>
+
+    <color name="c_ff5c26">#ff5c26</color>
+    <color name="c_cc5229">#cc5229</color>
+
+    <color name="c_ffd24c">#ffd24c</color>
+    <color name="c_e5ac39">#e5ac39</color>
+
+    <color name="c_00cc88">#00cc88</color>
+    <color name="c_00a66e">#00a66e</color>
+
+    <color name="c_0ba5d9">#0ba5d9</color>
+    <color name="c_128ab2">#128ab2</color>
+
+    <color name="c_d957d9">#d957d9</color>
+    <color name="c_bf43bf">#bf43bf</color>
+    
+    <color name="c_e6e6e6">#e6e6e6</color>
+
+    <color name="c_8b8b8c">#8b8b8c</color>
+
+    <color name="c_08000000">#08000000</color>
+
+    <color name="c_99000000">#99000000</color>
+
+    <color name="c_ccffffff">#ccffffff</color>
+    <color name="c_cc000000">#cc000000</color>
+    <color name="c_66000000">#66000000</color>
+
+    <color name="c_2274e6">#2274e6</color>
 </resources>

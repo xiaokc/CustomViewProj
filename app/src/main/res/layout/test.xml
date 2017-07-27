@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+    <ImageView
+            android:id="@+id/btn_revoke"
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:focusable="false"
+            android:clickable="false"
+            android:background="@drawable/btn_60_04blue_normal"
+
+    />
+
+    <ImageView
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:focusable="true"
+            android:src="@drawable/test"
+            android:id="@+id/imageView"/>
+
+</RelativeLayout>
