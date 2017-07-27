@@ -26,6 +26,7 @@ public class ToolbarTabView extends LinearLayout {
     private int mTextDefaultColor;
     private int mTouchDownColor;
     private Drawable mDefaultDrawable;
+
     public ToolbarTabView(Context context) {
         super(context);
         initView(context);
@@ -51,14 +52,11 @@ public class ToolbarTabView extends LinearLayout {
                 .getColor(R.styleable.ToolbarTabView_textDefaultColor, Color.parseColor("#99000000"));
         mTouchDownColor = mTypedArray
                 .getColor(R.styleable.ToolbarTabView_textTouchDownColor, Color.parseColor("#2274e6"));
-//        mDefaultDrawable = context.getDrawable(
-//                mTypedArray.getInteger(R.styleable.ToolbarTabView_imageSrc, R.drawable.toolbar_edit));
         mDefaultDrawable = mTypedArray.getDrawable(R.styleable.ToolbarTabView_imageSrc);
 
         mTypedArray.recycle();
 
     }
-
 
     private void initView(Context context) {
         LayoutInflater.from(context).inflate(R.layout.tab_view, this, true);

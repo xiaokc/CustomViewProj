@@ -3,7 +3,9 @@ package com.android.cong.customviewproj.pictureview.custom.history;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.android.cong.customviewproj.R;
 import com.android.cong.customviewproj.pictureview.custom.ShowAndEditActivity;
+import com.android.cong.customviewproj.pictureview.custom.ToolbarTabView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +14,7 @@ import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 /**
  * Created by xiaokecong on 26/07/2017.
@@ -105,11 +108,33 @@ public class OcrHistoryManager {
         mAdapter.setOnHistoryItemClickListener(new OnHistoryItemClickListener() {
             @Override
             public void onItemCardClick(String itemPath) {
-                Log.i("===>xkc","点击了history item, path:"+itemPath);
+                Log.i(TAG, "点击了history item, path:" + itemPath);
                 Intent intent = new Intent(mContext, ShowAndEditActivity.class);
-                intent.putExtra("path",itemPath);
-                intent.putExtra("isShow",true);
+                intent.putExtra("path", itemPath);
+                intent.putExtra("isShow", true);
                 mContext.startActivity(intent);
+            }
+        });
+
+        mAdapter.setOnHistoryItemTabViewClickListener(new OnHistoryTabViewClickListener() {
+            @Override
+            public void onHistoryItemTabViewClick(View view, String itemPath) {
+                if (view instanceof ToolbarTabView) {
+                    switch (view.getId()) {
+                        case R.id.tab_edit:
+                            Log.i(TAG, "点击了编辑,path:" + itemPath);
+                            break;
+                        case R.id.tab_share:
+                            Log.i(TAG, "点击了分享,path:" + itemPath);
+                            break;
+                        case R.id.tab_ocr:
+                            Log.i(TAG, "点击了ocr,path:" + itemPath);
+                            break;
+                        case R.id.tab_delete:
+                            Log.i(TAG, "点击了删除,path:" + itemPath);
+                            break;
+                    }
+                }
             }
         });
     }
@@ -200,7 +225,6 @@ public class OcrHistoryManager {
             mDataList.addAll(allItems);
         }
     }
-
 
     public interface OcrHistoryManagerCallback {
         void onLoadSucc(int count);

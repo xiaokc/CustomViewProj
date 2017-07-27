@@ -9,13 +9,11 @@ import com.android.cong.customviewproj.pictureview.ImageUtil;
 import com.android.cong.customviewproj.pictureview.custom.history.OcrDbHelper;
 import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryActivity;
 import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryItem;
-import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryManager;
 import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -28,7 +26,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -40,23 +37,13 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
 
     private RelativeLayout layoutRevoke; // 撤销的view
 
-    private RelativeLayout layoutToolbarShowImage;
+    private LinearLayout layoutToolbarShowImage;
     private LinearLayout layoutToolbarEditImage;
 
-    private LinearLayout llShowEdit;
-    private LinearLayout llShowShare;
-    private LinearLayout llShowOcr;
-    private LinearLayout llShowDelete;
-
-    private ImageView ivShowEdit;
-    private ImageView ivShowShare;
-    private ImageView ivShowOcr;
-    private ImageView ivShowDelete;
-
-    private TextView tvShowEdit;
-    private TextView tvShowShare;
-    private TextView tvShowOcr;
-    private TextView tvShowDelete;
+    private ToolbarTabView tabEdit;
+    private ToolbarTabView tabShare;
+    private ToolbarTabView tabOcr;
+    private ToolbarTabView tabDelete;
 
     private Button btnSave;
     private ImageView ivEditClose;
@@ -76,7 +63,6 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
 
     private OcrDbHelper mOcrDb;
 
-    private final Drawable[] ORIGINAL_TAB_DRAWABLES = new Drawable[4];
     private final int DEFAULT_TEXT_COLOR = Color.parseColor("#99000000");
     private final int TOUCH_DOWN_COLOR = Color.parseColor("#2274e6");
 
@@ -96,23 +82,13 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
 
         layoutRevoke = (RelativeLayout) findViewById(R.id.layout_revoke);
 
-        layoutToolbarShowImage = (RelativeLayout) findViewById(R.id.layout_toolbar_show_image);
+        layoutToolbarShowImage = (LinearLayout) findViewById(R.id.layout_toolbar_show_image);
         layoutToolbarEditImage = (LinearLayout) findViewById(R.id.layout_toolbar_edit_image);
 
-        llShowEdit = (LinearLayout) findViewById(R.id.ll_show_edit);
-        llShowShare = (LinearLayout) findViewById(R.id.ll_show_share);
-        llShowOcr = (LinearLayout) findViewById(R.id.ll_show_ocr);
-        llShowDelete = (LinearLayout) findViewById(R.id.ll_show_delete);
-
-        ivShowEdit = (ImageView) findViewById(R.id.iv_show_edit);
-        ivShowShare = (ImageView) findViewById(R.id.iv_show_share);
-        ivShowOcr = (ImageView) findViewById(R.id.iv_show_ocr);
-        ivShowDelete = (ImageView) findViewById(R.id.iv_show_delete);
-
-        tvShowEdit = (TextView) findViewById(R.id.tv_show_edit);
-        tvShowShare = (TextView) findViewById(R.id.tv_show_share);
-        tvShowOcr = (TextView) findViewById(R.id.tv_show_ocr);
-        tvShowDelete = (TextView) findViewById(R.id.tv_show_delete);
+        tabEdit = (ToolbarTabView) findViewById(R.id.tab_edit);
+        tabShare = (ToolbarTabView) findViewById(R.id.tab_share);
+        tabOcr = (ToolbarTabView) findViewById(R.id.tab_ocr);
+        tabDelete = (ToolbarTabView) findViewById(R.id.tab_delete);
 
         btnRevoke = (ImageView) findViewById(R.id.btn_revoke);
         btnSave = (Button) findViewById(R.id.btn_edit_save);
@@ -138,12 +114,6 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         colorViewMap.put(R.id.iv_color_blue, R.id.iv_color_blue_tag);
         colorViewMap.put(R.id.iv_color_purple, R.id.iv_color_purple_tag);
 
-        // TODO: tint会改变drawable
-        ORIGINAL_TAB_DRAWABLES[0] = getResources().getDrawable(R.drawable.toolbar_edit).mutate();
-        ORIGINAL_TAB_DRAWABLES[1] = getResources().getDrawable(R.drawable.toolbar_share).mutate();
-        ORIGINAL_TAB_DRAWABLES[2] = getResources().getDrawable(R.drawable.toolbar_ocr).mutate();
-        ORIGINAL_TAB_DRAWABLES[3] = getResources().getDrawable(R.drawable.toolbar_delete).mutate();
-
     }
 
     private void initEvent() {
@@ -161,15 +131,15 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
             }
         });
 
-        llShowEdit.setOnClickListener(this);
-        llShowShare.setOnClickListener(this);
-        llShowOcr.setOnClickListener(this);
-        llShowDelete.setOnClickListener(this);
+        tabEdit.setOnClickListener(this);
+        tabShare.setOnClickListener(this);
+        tabOcr.setOnClickListener(this);
+        tabDelete.setOnClickListener(this);
 
-        llShowEdit.setOnTouchListener(this);
-        llShowShare.setOnTouchListener(this);
-        llShowOcr.setOnTouchListener(this);
-        llShowDelete.setOnTouchListener(this);
+        tabEdit.setOnTouchListener(this);
+        tabShare.setOnTouchListener(this);
+        tabOcr.setOnTouchListener(this);
+        tabDelete.setOnTouchListener(this);
 
         btnRevoke.setOnClickListener(this);
         btnSave.setOnClickListener(this);
@@ -189,17 +159,18 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.ll_show_edit:
+            // 图片查看页面底部的四个tab
+            case R.id.tab_edit:
                 changeEditToolbar();
                 break;
-            case R.id.ll_show_share:
+            case R.id.tab_share:
                 Toast.makeText(this, "分享", Toast.LENGTH_LONG).show();
                 handleShareEvent();
                 break;
-            case R.id.ll_show_ocr:
+            case R.id.tab_ocr:
                 Toast.makeText(this, "ocr", Toast.LENGTH_LONG).show();
                 break;
-            case R.id.ll_show_delete:
+            case R.id.tab_delete:
                 Toast.makeText(this, "delete", Toast.LENGTH_LONG).show();
                 break;
 
@@ -255,54 +226,13 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: // 手指按下的时候
-                updateTouchDownColor(v);
+                ((ToolbarTabView) v).setTouchdDownColor(TOUCH_DOWN_COLOR);
                 break;
             case MotionEvent.ACTION_UP:
-                resetShowTabColor();
+                ((ToolbarTabView) v).setDefaultColor(DEFAULT_TEXT_COLOR);
                 break;
         }
         return false;
-    }
-
-    /**
-     * 更新图片查看toolbar上被按下的tab颜色
-     *
-     * @param view
-     */
-    private void updateTouchDownColor(View view) {
-        switch (view.getId()) {
-            case R.id.ll_show_edit:
-                ivShowEdit.setImageDrawable(ImageUtil.tintDrawable(ORIGINAL_TAB_DRAWABLES[0], TOUCH_DOWN_COLOR));
-                tvShowEdit.setTextColor(TOUCH_DOWN_COLOR);
-                break;
-            case R.id.ll_show_share:
-                ivShowShare.setImageDrawable(ImageUtil.tintDrawable(ORIGINAL_TAB_DRAWABLES[1], TOUCH_DOWN_COLOR));
-                tvShowShare.setTextColor(TOUCH_DOWN_COLOR);
-                break;
-            case R.id.ll_show_ocr:
-                ivShowOcr.setImageDrawable(ImageUtil.tintDrawable(ORIGINAL_TAB_DRAWABLES[2], TOUCH_DOWN_COLOR));
-                tvShowOcr.setTextColor(TOUCH_DOWN_COLOR);
-                break;
-            case R.id.ll_show_delete:
-                ivShowDelete.setImageDrawable(ImageUtil.tintDrawable(ORIGINAL_TAB_DRAWABLES[3], TOUCH_DOWN_COLOR));
-                tvShowDelete.setTextColor(TOUCH_DOWN_COLOR);
-                break;
-        }
-    }
-
-    /**
-     * 手指抬起后，重置tab的图片颜色和字体颜色
-     */
-    private void resetShowTabColor() {
-        ivShowEdit.setImageDrawable(ORIGINAL_TAB_DRAWABLES[0]);
-        ivShowShare.setImageDrawable(ORIGINAL_TAB_DRAWABLES[1]);
-        ivShowOcr.setImageDrawable(ORIGINAL_TAB_DRAWABLES[2]);
-        ivShowDelete.setImageDrawable(ORIGINAL_TAB_DRAWABLES[3]);
-
-        tvShowEdit.setTextColor(DEFAULT_TEXT_COLOR);
-        tvShowShare.setTextColor(DEFAULT_TEXT_COLOR);
-        tvShowOcr.setTextColor(DEFAULT_TEXT_COLOR);
-        tvShowDelete.setTextColor(DEFAULT_TEXT_COLOR);
     }
 
     /**
@@ -386,11 +316,12 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
             }
         });
 
-        insertItemToDb(path,time);
+        insertItemToDb(path, time);
     }
 
     /**
      * 保存的图片插入数据库
+     *
      * @param path
      * @param time
      */
