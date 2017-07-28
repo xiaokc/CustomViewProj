@@ -636,4 +636,12 @@ public class CustomImageView extends View {
         this.mPaintEnable = paintEnable;
     }
 
+    /**
+     * 判断当前图片是否被编辑过了
+     * @return
+     */
+    public boolean isEdited() {
+        return mBufferPathList != null && mBufferPathList.size() > 0;
+    }
+
 }

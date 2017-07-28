@@ -13,6 +13,7 @@ import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryItem
 import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -88,7 +89,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private void initView() {
         customImageView = (CustomImageView) findViewById(R.id.iv_image);
         customImageView.setClickEnable(true);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.img_weibo);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_weibo);
         customImageView.setBitmap(bitmap);
 
         layoutRevoke = (RelativeLayout) findViewById(R.id.layout_revoke);
@@ -185,7 +186,6 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
                 customImageView.setBitmap(bitmap);
             }
         }
-
 
     }
 
@@ -312,36 +312,41 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     }
 
     private void handleEditCloseEvent() {
-        // 提示对话框
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        AlertDialog dialog = builder.setMessage("保存涂鸦？")
-                .setNegativeButton("舍弃", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        customImageView.clear();
-                        changeShowToolbar();
-
-                    }
-                })
-                .setPositiveButton("保存", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handleSaveEvent();
-                    }
-                })
-                .show();
+        if (customImageView.isEdited()) { // 如果当前图片已经被编辑过，点击关闭，弹出提示框
+            new ExitImageEditDialog(this, R.style.Theme_AppCompat_Dialog,
+                    getResources().getString(R.string.dialog_exit_edit_title),
+                    new ExitImageEditDialog.OnDialogCloseListener() {
+                        @Override
+                        public void onClose(Dialog dialog, boolean confirm) {
+                            if (confirm) { // 放弃已编辑内容，直接退出
+                                dialog.dismiss();
+                                finish();
+                            }else {
+                                dialog.dismiss();
+                            }
+                        }
+                    })
+                    .setNegativeButtonName(getResources().getString(R.string.btn_cancel_msg))
+                    .setPositiveButtonName(getResources().getString(R.string.btn_ok_msg))
+                    .show();
+        } else {
+            // 没有被编辑过，直接退出
+            finish();
+        }
 
     }
 
     private void handleSaveEvent() {
         long time = System.currentTimeMillis();
-        String path = "/sdcard/" + time + ".png";
+        final String path = "/sdcard/" + time + ".png";
         customImageView.save(path, new OnBitmapSaveListener() {
             @Override
             public void onSucc() {
+                // 保存成功，马上更新当前画布
                 Toast.makeText(ShowAndEditActivity.this, "保存成功！", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(ShowAndEditActivity.this, OcrHistoryActivity.class));
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                customImageView.setBitmap(bitmap);
+
             }
 
             @Override
@@ -350,16 +355,16 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
             }
         });
 
-        insertItemToDb(path, time);
+        insertItemToDb(path, time); // 插入到数据库
     }
 
     private void handleDeleteEvent() {
         boolean deleteSucc = mOcrDb.deleteItemWithPath(imagePath);
         if (deleteSucc) {
-            Toast.makeText(this,"删除成功",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "删除成功", Toast.LENGTH_LONG).show();
             finish();
         } else {
-            Toast.makeText(this,"删除失败",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "删除失败", Toast.LENGTH_LONG).show();
         }
     }
 

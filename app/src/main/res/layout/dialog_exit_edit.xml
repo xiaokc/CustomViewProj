@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/bg_round_white"
+              android:layout_centerInParent="true"
+              android:orientation="vertical" >
+
+    <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="@string/dialog_exit_edit_title"
+            android:textSize="18dp"
+            android:textColor="@color/c_cc000000"/>
+
+    <LinearLayout
+            android:layout_marginTop="7dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="22dp"
+            android:orientation="horizontal">
+
+        <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:gravity="center"
+                android:text="Cancel"
+                android:textSize="18dp"
+                android:textColor="@color/c_99000000"
+                android:background="@drawable/btn_white_selector"
+        />
+
+        <Button
+                android:layout_marginLeft="4dp"
+                android:id="@+id/btn_ok"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_weight="1.0"
+                android:text="OK"
+                android:textSize="18dp"
+                android:background="@drawable/btn_blue_selector"
+                android:textColor="@color/c_ffffff"/>
+
+    </LinearLayout>
+
+</LinearLayout>
