@@ -4,46 +4,34 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <RelativeLayout
-            android:id="@+id/rl_headbar"
+    <android.support.v7.widget.Toolbar
+            xmlns:toolbar="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar_history"
             android:background="@color/colorPrimary"
+            toolbar:title="History"
+            toolbar:titleTextColor="@color/c_ffffff"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize">
-        <ImageView
-                android:id="@+id/iv_headbar_back"
-                android:layout_marginLeft="20dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:src="@drawable/left_arrow_white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
         <TextView
-                android:layout_toRightOf="@id/iv_headbar_back"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:text="History"
-                android:textSize="20dp"
-                android:textColor="@color/c_ffffff"
+                android:id="@+id/tv_empty_history"
+                android:layout_centerInParent="true"
+                android:text="No History"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        <ImageView
-                android:id="@+id/iv_headbar_more"
-                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+        />
     </RelativeLayout>
 
-
-<android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_history"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-</android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

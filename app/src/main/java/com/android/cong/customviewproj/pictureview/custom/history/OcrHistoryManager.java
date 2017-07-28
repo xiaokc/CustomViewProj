@@ -1,12 +1,15 @@
 package com.android.cong.customviewproj.pictureview.custom.history;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.android.cong.customviewproj.R;
+import com.android.cong.customviewproj.pictureview.custom.DeleteHistoryItemDialog;
 import com.android.cong.customviewproj.pictureview.custom.ShowAndEditActivity;
 import com.android.cong.customviewproj.pictureview.custom.ToolbarTabView;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -41,6 +44,7 @@ public class OcrHistoryManager {
     private OcrDbHelper mOcrDb;
 
     private OcrHistoryManagerCallback mManagerCallback;
+    private OcrHistoryEmptyCallback mHistoryEmptyCallback;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -65,6 +69,7 @@ public class OcrHistoryManager {
                         mAdapter.notifyDataSetChanged();
                     }
                     break;
+
             }
         }
     };
@@ -198,6 +203,10 @@ public class OcrHistoryManager {
         List<OcrHistoryItem> onePageItems = mOcrDb.getOnePageItems(mPage, PAGE_SIZE);
 
         if (null == onePageItems || onePageItems.size() == 0) { // 没有更多数据了
+            if (mPage == 1) { // 数据库没有一条记录
+                mHistoryEmptyCallback.onHistoryEmpty();
+                return;
+            }
             mIsNoMoreData = true;
             if (mAdapter != null) {
                 mAdapter.setIsHasMore(false);
@@ -233,6 +242,14 @@ public class OcrHistoryManager {
         this.mManagerCallback = managerCallback;
     }
 
+    public interface OcrHistoryEmptyCallback{
+        void onHistoryEmpty();
+    }
+
+    public void setOcrHistoryEmptyCallback(OcrHistoryEmptyCallback historyEmptyCallback) {
+        this.mHistoryEmptyCallback = historyEmptyCallback;
+    }
+
     /**
      * 界面跳转
      *
@@ -246,11 +263,67 @@ public class OcrHistoryManager {
         mContext.startActivity(intent);
     }
 
-    /**
-     * 处理item的删除事件
-     *
-     * @param itemPath
-     */
+//    /**
+//     * 处理item的删除事件
+//     *
+//     * @param itemPath
+//     */
+//    private void handleDeleteEvent(final String itemPath) {
+//        new DeleteHistoryItemDialog(mContext, R.style.Theme_AppCompat_Dialog, "删除历史记录？",
+//                new DeleteHistoryItemDialog.OnCloseListener() {
+//                    @Override
+//                    public void onClose(Dialog dialog, boolean confirm, boolean deleteRealFile) {
+//                        if (!confirm) {
+//                            dialog.dismiss();
+//                            return;
+//                        }
+//
+//                        // 删除历史记录，从数据库中删除
+//                        boolean deleteSuccFromDb = mOcrDb.deleteItemWithPath(itemPath);
+//
+//                        // 同时删除图片，从本地文件中删除
+//                        boolean deleteSuccFromLocal = false;
+//
+//                        if (deleteRealFile) {
+//                            File file = new File(itemPath);
+//                            if (file.exists()) {
+//                                deleteSuccFromLocal = file.delete();
+//                            } else {
+//                                Toast.makeText(mContext, "图片路径不存在", Toast.LENGTH_LONG).show();
+//                                dialog.dismiss();
+//                                return;
+//                            }
+//
+//                            if (!deleteSuccFromDb && !deleteSuccFromLocal) {
+//                                Toast.makeText(mContext, "删除失败", Toast.LENGTH_LONG).show();
+//                                dialog.dismiss();
+//                            } else {
+//                                Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
+//                                dialog.dismiss();
+//                            }
+//                        } else {
+//                            if (deleteSuccFromDb) {
+//                                Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
+//                                dialog.dismiss();
+//                                mHandler.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        loadData();
+//                                    }
+//                                });
+//                            }
+//                        }
+//
+//                    }
+//                })
+//                .setNegativeButton("取消")
+//                .setPositiveButton("确定")
+//                .setRadioText("同时删除图片")
+//                .show();
+//
+//    }
+
+
     private void handleDeleteEvent(String itemPath) {
         boolean deleteSucc = mOcrDb.deleteItemWithPath(itemPath);
         if (deleteSucc) {

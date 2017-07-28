@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+            xmlns:toolbar="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar_setting"
+            android:background="@color/colorPrimary"
+            toolbar:title="Setting"
+            toolbar:titleTextColor="@color/c_ffffff"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize">
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+        <LinearLayout
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <TextView
+                    android:textSize="15dp"
+                    android:textColor="@color/c_cc000000"
+                    android:text="Start Up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            <TextView
+                    android:id="@+id/tv_ocr_enable"
+                    android:text="Enabled"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/c_99000000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.SwitchCompat
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:checked="true"
+                android:id="@+id/switch_ocr_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/c_1a000000"
+            />
+
+</LinearLayout>
