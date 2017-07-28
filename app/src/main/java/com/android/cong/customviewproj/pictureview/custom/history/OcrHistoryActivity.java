@@ -86,7 +86,12 @@ public class OcrHistoryActivity extends AppCompatActivity {
         mOcrHistoryManager.setOcrHistoryEmptyCallback(new OcrHistoryManager.OcrHistoryEmptyCallback() {
             @Override
             public void onHistoryEmpty() {
-                tvEmpty.setVisibility(View.VISIBLE);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvEmpty.setVisibility(View.VISIBLE);
+                    }
+                });
             }
         });
 

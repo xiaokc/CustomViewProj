@@ -1,5 +1,7 @@
 package com.android.cong.customviewproj.pictureview.custom.history;
 
+import java.io.File;
+
 import com.android.cong.customviewproj.R;
 import com.android.cong.customviewproj.pictureview.ImageUtil;
 import com.android.cong.customviewproj.pictureview.custom.ToolbarTabView;
@@ -59,6 +61,10 @@ public class OcrHistoryViewHolder extends OcrHistoryBaseViewHolder {
     protected void bindData(Object info) {
         OcrHistoryItem item = (OcrHistoryItem) info;
         String path = item.getPath();
+        File file = new File(path);
+        if (!file.exists()) { // 图片路径不存在
+            return;
+        }
         Bitmap bitmap = BitmapFactory.decodeFile(path);
         String name = path.substring(path.lastIndexOf("/") + 1);
         ivImage.setImageBitmap(

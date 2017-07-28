@@ -67,6 +67,10 @@
 
         </activity>
 
+        <activity android:name=".pictureview.custom.history.OcrSettingActivity">
+
+        </activity>
+
     </application>
 
 </manifest>

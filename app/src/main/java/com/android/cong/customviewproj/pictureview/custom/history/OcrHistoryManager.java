@@ -242,7 +242,7 @@ public class OcrHistoryManager {
         this.mManagerCallback = managerCallback;
     }
 
-    public interface OcrHistoryEmptyCallback{
+    public interface OcrHistoryEmptyCallback {
         void onHistoryEmpty();
     }
 
@@ -263,78 +263,89 @@ public class OcrHistoryManager {
         mContext.startActivity(intent);
     }
 
-//    /**
-//     * 处理item的删除事件
-//     *
-//     * @param itemPath
-//     */
-//    private void handleDeleteEvent(final String itemPath) {
-//        new DeleteHistoryItemDialog(mContext, R.style.Theme_AppCompat_Dialog, "删除历史记录？",
-//                new DeleteHistoryItemDialog.OnCloseListener() {
-//                    @Override
-//                    public void onClose(Dialog dialog, boolean confirm, boolean deleteRealFile) {
-//                        if (!confirm) {
-//                            dialog.dismiss();
-//                            return;
-//                        }
-//
-//                        // 删除历史记录，从数据库中删除
-//                        boolean deleteSuccFromDb = mOcrDb.deleteItemWithPath(itemPath);
-//
-//                        // 同时删除图片，从本地文件中删除
-//                        boolean deleteSuccFromLocal = false;
-//
-//                        if (deleteRealFile) {
-//                            File file = new File(itemPath);
-//                            if (file.exists()) {
-//                                deleteSuccFromLocal = file.delete();
-//                            } else {
-//                                Toast.makeText(mContext, "图片路径不存在", Toast.LENGTH_LONG).show();
-//                                dialog.dismiss();
-//                                return;
-//                            }
-//
-//                            if (!deleteSuccFromDb && !deleteSuccFromLocal) {
-//                                Toast.makeText(mContext, "删除失败", Toast.LENGTH_LONG).show();
-//                                dialog.dismiss();
-//                            } else {
-//                                Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
-//                                dialog.dismiss();
-//                            }
-//                        } else {
-//                            if (deleteSuccFromDb) {
-//                                Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
-//                                dialog.dismiss();
-//                                mHandler.post(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        loadData();
-//                                    }
-//                                });
-//                            }
-//                        }
-//
-//                    }
-//                })
-//                .setNegativeButton("取消")
-//                .setPositiveButton("确定")
-//                .setRadioText("同时删除图片")
-//                .show();
-//
-//    }
+    /**
+     * 处理item的删除事件
+     *
+     * @param itemPath
+     */
+    private void handleDeleteEvent(final String itemPath) {
+        new DeleteHistoryItemDialog(mContext, R.style.Theme_AppCompat_Dialog,
+                mContext.getResources().getString(R.string.dialog_delete_history_title),
+                new DeleteHistoryItemDialog.OnCloseListener() {
+                    @Override
+                    public void onClose(Dialog dialog, boolean confirm, boolean deleteRealFile) {
+                        if (!confirm) { // 点击的不是确认按钮
+                            dialog.dismiss();
+                            return;
+                        }
 
+                        // 删除历史记录，从数据库中删除
+                        boolean deleteSuccFromDb = mOcrDb.deleteItemWithPath(itemPath);
 
-    private void handleDeleteEvent(String itemPath) {
-        boolean deleteSucc = mOcrDb.deleteItemWithPath(itemPath);
-        if (deleteSucc) {
-            Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    loadData();
-                }
-            });
-        }
+                        // 同时删除图片，从本地文件中删除
+                        boolean deleteSuccFromLocal = false;
+
+                        if (deleteRealFile) {
+                            File file = new File(itemPath);
+                            if (file.exists()) {
+                                deleteSuccFromLocal = file.delete();
+                            } else {
+                                Toast.makeText(mContext, "图片路径不存在", Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
+                                return;
+                            }
+
+                            if (deleteSuccFromLocal) {
+                                if (deleteSuccFromDb) { // 同时删除成功
+                                    Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            loadData();
+                                        }
+                                    });
+                                } else {
+                                    Toast.makeText(mContext, "历史记录删除失败", Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                Toast.makeText(mContext, "删除失败", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            if (deleteSuccFromDb) { // 同时删除成功
+                                Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadData();
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(mContext, "历史记录删除失败", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        dialog.dismiss();
+
+                    }
+                })
+                .setRadioText(mContext.getResources().getString(R.string.dialog_delete_history_radio_msg))
+                .setPositiveButton(mContext.getResources().getString(R.string.btn_ok_msg))
+                .setNegativeButton(mContext.getResources().getString(R.string.btn_cancel_msg))
+                .show();
+
     }
+
+    //    private void handleDeleteEvent(String itemPath) {
+    //        boolean deleteSucc = mOcrDb.deleteItemWithPath(itemPath);
+    //        if (deleteSucc) {
+    //            Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
+    //            mHandler.post(new Runnable() {
+    //                @Override
+    //                public void run() {
+    //                    loadData();
+    //                }
+    //            });
+    //        }
+    //    }
 
 }
