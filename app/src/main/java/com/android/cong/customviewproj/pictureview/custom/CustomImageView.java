@@ -190,16 +190,16 @@ public class CustomImageView extends View {
         mCenterTranX = (getWidth() - mPrivateWidth) / 2;
         mCenterTranY = (getHeight() - mPrivateHeight) / 2;
 
-        // 根据图片调整比例设置控件宽高
-        ViewGroup.LayoutParams params = getLayoutParams();
-        params.width = mPrivateWidth;
-        params.height = mPrivateHeight;
-        setLayoutParams(params);
+        // 根据图片调整比例设置控件宽高，这样是将图片控件大小设置为固定值了
+//        ViewGroup.LayoutParams params = getLayoutParams();
+//        params.width = mPrivateWidth;
+//        params.height = mPrivateHeight;
+//        setLayoutParams(params);
 
         initCanvas();
 
         // 画笔粗细恒定，不再随着原始缩放比例改变
-//        mPaintSize /= mPrivateScale;
+        //        mPaintSize /= mPrivateScale;
 
         invalidate();
 
@@ -449,11 +449,12 @@ public class CustomImageView extends View {
     private void updatePosition() {
         // 先调整宽度上的
         if (mPrivateWidth * mScale < getWidth()) { // 缩放后图片宽度小于控件宽度，缩小状态
-            if (mTransX + mCenterTranX < 0) {
-                mTransX = -mCenterTranX;
-            } else if (mTransX + mCenterTranX + mPrivateWidth * mScale > getWidth()) {
-                mTransX = getWidth() - mCenterTranX - mPrivateWidth * mScale;
-            }
+//            if (mTransX + mCenterTranX < 0) {
+//                mTransX = -mCenterTranX;
+//            } else if (mTransX + mCenterTranX + mPrivateWidth * mScale > getWidth()) {
+//                mTransX = getWidth() - mCenterTranX - mPrivateWidth * mScale;
+//            }
+            mTransX = getWidth() / 2f - mCenterTranX - mPrivateWidth * mScale / 2f; // 调整水平方向中心点
         } else { // 放大状态
             if (mTransX + mCenterTranX > 0) {
                 mTransX = -mCenterTranX;
@@ -464,11 +465,12 @@ public class CustomImageView extends View {
 
         // 调整高度上的
         if (mPrivateHeight * mScale < getHeight()) {
-            if (mTransY + mCenterTranY < 0) {
-                mTransY = -mCenterTranY;
-            } else if (mTransY + mCenterTranY + mPrivateHeight * mScale > getHeight()) {
-                mTransY = getHeight() - mCenterTranY - mPrivateHeight * mScale;
-            }
+//            if (mTransY + mCenterTranY < 0) {
+//                mTransY = -mCenterTranY;
+//            } else if (mTransY + mCenterTranY + mPrivateHeight * mScale > getHeight()) {
+//                mTransY = getHeight() - mCenterTranY - mPrivateHeight * mScale;
+//            }
+            mTransY = getHeight() / 2f - mCenterTranY - mPrivateHeight * mScale / 2f; // 调整竖直方向中心点
         } else {
             if (mTransY + mCenterTranY > 0) {
                 mTransY = -mCenterTranY;
@@ -638,6 +640,7 @@ public class CustomImageView extends View {
 
     /**
      * 判断当前图片是否被编辑过了
+     *
      * @return
      */
     public boolean isEdited() {
