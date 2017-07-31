@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
 
 
     <application
@@ -48,12 +49,10 @@
 
         </activity>
 
-        <activity android:name=".pictureview.custom.ShowAndEditActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+        <activity
+                android:name=".pictureview.custom.ShowAndEditActivity"
+                android:configChanges="orientation|keyboardHidden|screenSize">
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity android:name=".pictureview.custom.history.OcrHistoryActivity">
 
@@ -69,6 +68,14 @@
 
         <activity android:name=".pictureview.custom.history.OcrSettingActivity">
 
+        </activity>
+
+        <activity android:name=".pictureview.test.TestMainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
 
     </application>

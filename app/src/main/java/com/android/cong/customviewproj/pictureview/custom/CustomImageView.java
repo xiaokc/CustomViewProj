@@ -201,6 +201,10 @@ public class CustomImageView extends View {
         // 画笔粗细恒定，不再随着原始缩放比例改变
         // mPaintSize /= mPrivateScale;
 
+        if (mBufferPathList != null) { // 切换屏幕方向后，画布恢复
+            draw(mBufferCanvas, mBufferPathList);
+        }
+
         invalidate();
 
     }
