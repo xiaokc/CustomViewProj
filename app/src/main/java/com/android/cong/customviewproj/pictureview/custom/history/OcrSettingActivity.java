@@ -48,7 +48,6 @@ public class OcrSettingActivity extends AppCompatActivity {
         toolbarSetting.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(OcrSettingActivity.this, OcrHistoryActivity.class));
                 finish();
             }
         });

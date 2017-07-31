@@ -8,13 +8,11 @@ import java.util.Map;
 import com.android.cong.customviewproj.R;
 import com.android.cong.customviewproj.pictureview.ImageUtil;
 import com.android.cong.customviewproj.pictureview.custom.history.OcrDbHelper;
-import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryActivity;
 import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryItem;
 import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,7 +20,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,7 +35,7 @@ import android.widget.Toast;
  */
 
 public class ShowAndEditActivity extends Activity implements View.OnClickListener, View.OnTouchListener {
-    private CustomImageView customImageView;
+    private ScaleDrawImageView scaleDrawImageView;
 
     private RelativeLayout layoutRevoke; // 撤销的view
 
@@ -70,6 +67,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private Intent intent;
     private boolean isShowImage; // true-查看图片，false-编辑图片
     private String imagePath;
+    private String intentFrom; // intent的来源，"screenshot"-来自截屏，"history"-来自历史页
 
     private final int DEFAULT_TEXT_COLOR = Color.parseColor("#99000000");
     private final int TOUCH_DOWN_COLOR = Color.parseColor("#2274e6");
@@ -87,10 +85,10 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     }
 
     private void initView() {
-        customImageView = (CustomImageView) findViewById(R.id.iv_image);
-        customImageView.setClickEnable(true);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_weibo);
-        customImageView.setBitmap(bitmap);
+        scaleDrawImageView = (ScaleDrawImageView) findViewById(R.id.iv_image);
+        scaleDrawImageView.setClickEnable(true);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.screenshot3);
+        scaleDrawImageView.setBitmap(bitmap);
 
         layoutRevoke = (RelativeLayout) findViewById(R.id.layout_revoke);
 
@@ -131,8 +129,8 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private void initEvent() {
         mOcrDb = OcrDbHelper.getInstance();
 
-        customImageView.setClickEnable(true);
-        customImageView.setViewClickListener(new OnViewClickListener() {
+        scaleDrawImageView.setClickEnable(true);
+        scaleDrawImageView.setViewClickListener(new OnViewClickListener() {
             @Override
             public void onViewClick() {
                 if (layoutToolbarShowImage.getVisibility() == View.VISIBLE) {
@@ -171,19 +169,29 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private void handleGetIntent() {
         intent = getIntent();
         if (intent != null) {
-            imagePath = intent.getStringExtra("imagePath");
-            isShowImage = intent.getBooleanExtra("isShow", true);
+            if (intent.hasExtra("imagePath")) {
+                imagePath = intent.getStringExtra("imagePath");
+            }
+            if (intent.hasExtra("isShow")) {
+                isShowImage = intent.getBooleanExtra("isShow", true);
+            }
+            if (intent.hasExtra("intentFrom")) {
+                intentFrom = intent.getStringExtra("intentFrom");
+            }
+
         }
 
-        if (!isShowImage) { // 编辑图片
-            changeEditToolbar();
+        if (isShowImage) { // 查看图片
+            changeShowToolbar();
+        } else {
+            changeEditToolbar(); // 编辑图片
         }
 
         if (!TextUtils.isEmpty(imagePath)) {
             File file = new File(imagePath);
             if (file.exists()) {
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                customImageView.setBitmap(bitmap);
+                scaleDrawImageView.setBitmap(bitmap);
             }
         }
 
@@ -208,7 +216,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
                 break;
 
             case R.id.btn_revoke:
-                customImageView.undo();
+                scaleDrawImageView.undo();
                 break;
             case R.id.btn_edit_save:
                 handleSaveEvent();
@@ -220,35 +228,35 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
                 handleShareEvent();
                 break;
             case R.id.iv_color_white:
-                customImageView.setPaintColor(Color.parseColor("#ffffff"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#ffffff"));
                 updateColorToolbar(R.id.iv_color_white);
                 break;
             case R.id.iv_color_black:
-                customImageView.setPaintColor(Color.parseColor("#333333"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#333333"));
                 updateColorToolbar(R.id.iv_color_black);
                 break;
             case R.id.iv_color_red:
-                customImageView.setPaintColor(Color.parseColor("#ff3440"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#ff3440"));
                 updateColorToolbar(R.id.iv_color_red);
                 break;
             case R.id.iv_color_orange:
-                customImageView.setPaintColor(Color.parseColor("#ff5c26"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#ff5c26"));
                 updateColorToolbar(R.id.iv_color_orange);
                 break;
             case R.id.iv_color_yellow:
-                customImageView.setPaintColor(Color.parseColor("#ffd24c"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#ffd24c"));
                 updateColorToolbar(R.id.iv_color_yellow);
                 break;
             case R.id.iv_color_green:
-                customImageView.setPaintColor(Color.parseColor("#00cc88"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#00cc88"));
                 updateColorToolbar(R.id.iv_color_green);
                 break;
             case R.id.iv_color_blue:
-                customImageView.setPaintColor(Color.parseColor("#0ba5d9"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#0ba5d9"));
                 updateColorToolbar(R.id.iv_color_blue);
                 break;
             case R.id.iv_color_purple:
-                customImageView.setPaintColor(Color.parseColor("#d957d9"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#d957d9"));
                 updateColorToolbar(R.id.iv_color_purple);
                 break;
         }
@@ -312,7 +320,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     }
 
     private void handleEditCloseEvent() {
-        if (customImageView.isEdited()) { // 如果当前图片已经被编辑过，点击关闭，弹出提示框
+        if (scaleDrawImageView.isEdited()) { // 如果当前图片已经被编辑过，点击关闭，弹出提示框
             new ExitImageEditDialog(this, R.style.Theme_AppCompat_Dialog,
                     getResources().getString(R.string.dialog_exit_edit_title),
                     new ExitImageEditDialog.OnDialogCloseListener() {
@@ -321,7 +329,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
                             if (confirm) { // 放弃已编辑内容，直接退出
                                 dialog.dismiss();
                                 finish();
-                            }else {
+                            } else {
                                 dialog.dismiss();
                             }
                         }
@@ -339,13 +347,20 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private void handleSaveEvent() {
         long time = System.currentTimeMillis();
         final String path = "/sdcard/" + time + ".png";
-        customImageView.save(path, new OnBitmapSaveListener() {
+        scaleDrawImageView.save(path, new OnBitmapSaveListener() {
             @Override
             public void onSucc() {
-                // 保存成功，马上更新当前画布
-                Toast.makeText(ShowAndEditActivity.this, "保存成功！", Toast.LENGTH_LONG).show();
-                Bitmap bitmap = BitmapFactory.decodeFile(path);
-                customImageView.setBitmap(bitmap);
+                Toast.makeText(ShowAndEditActivity.this, "编辑图片已保存！", Toast.LENGTH_LONG).show();
+                if (!TextUtils.isEmpty(intentFrom)) {
+                    if (intentFrom.equals("history")) {// 如果是历史页的图片编辑，保存成功后，返回并刷新历史页
+                        finish();
+                    } else if (intentFrom.equals("screenshot")) { // 如果是截屏页的图片编辑，保存成功后返回截图弹窗
+                        finish();
+                    }
+                }
+                 //保存成功，马上更新当前画布
+//                Bitmap bitmap = BitmapFactory.decodeFile(path);
+//                customImageView.setBitmap(bitmap);
 
             }
 
@@ -384,13 +399,13 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
 
     }
 
+    // 保存画布内容并分享
     private void handleShareEvent() {
 
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         handleBackEvent();
 
     }
@@ -398,6 +413,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private void handleBackEvent() {
         if (layoutToolbarEditImage.getVisibility() == View.VISIBLE) {
             // TODO: 25/07/2017  询问是否保存涂鸦内容的对话框
+            handleEditCloseEvent();
         } else {
             this.finish();
         }
@@ -408,8 +424,8 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         layoutToolbarShowImage.setVisibility(View.VISIBLE);
         layoutToolbarEditImage.setVisibility(View.GONE);
         layoutRevoke.setVisibility(View.GONE);
-        customImageView.setClickEnable(true);
-        customImageView.setPaintEnable(false);
+        scaleDrawImageView.setClickEnable(true);
+        scaleDrawImageView.setPaintEnable(false);
     }
 
     // toolbar 切换至 toolbar_edit_image
@@ -417,9 +433,9 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
         layoutToolbarShowImage.setVisibility(View.GONE);
         layoutToolbarEditImage.setVisibility(View.VISIBLE);
         layoutRevoke.setVisibility(View.VISIBLE);
-        customImageView.setClickEnable(false);
-        customImageView.setPaintEnable(true);
-        customImageView.setPaintColor(Color.parseColor("#ffffff"));
+        scaleDrawImageView.setClickEnable(false);
+        scaleDrawImageView.setPaintEnable(true);
+        scaleDrawImageView.setPaintColor(Color.parseColor("#ffffff"));
         updateColorToolbar(R.id.iv_color_white);
 
     }

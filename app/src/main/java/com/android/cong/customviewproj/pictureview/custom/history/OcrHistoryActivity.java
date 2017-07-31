@@ -65,7 +65,7 @@ public class OcrHistoryActivity extends AppCompatActivity {
         toolbarHistory.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(OcrHistoryActivity.this,"back",Toast.LENGTH_LONG).show();
+                finish();
             }
         });
 
@@ -166,5 +166,15 @@ public class OcrHistoryActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    /**
+     * 点击back，退出应用
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+//        System.exit(0);
     }
 }

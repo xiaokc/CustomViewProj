@@ -22,13 +22,12 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 
 /**
  * Created by xiaokecong on 21/07/2017.
  */
 
-public class CustomImageView extends View {
+public class ScaleDrawImageView extends View {
     private Bitmap mBitmap; // 原始图片
     private Drawable mDrawable;
     private int mOriginalWidth; // 原始图片宽高
@@ -88,11 +87,11 @@ public class CustomImageView extends View {
     private boolean mClickEnable; // 是否接受点击事件
     private boolean mPaintEnable; // 是否接受涂鸦
 
-    public CustomImageView(Context context) {
+    public ScaleDrawImageView(Context context) {
         this(context, null);
     }
 
-    public CustomImageView(Context context, @Nullable AttributeSet attrs) {
+    public ScaleDrawImageView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
 
@@ -101,9 +100,9 @@ public class CustomImageView extends View {
             setLayerType(LAYER_TYPE_SOFTWARE, null);
         }
 
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CustomImageView);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ScaleDrawImageView);
         //todo: 这里直接读取属性设置的图片，有可能会oom
-        mDrawable = typedArray.getDrawable(R.styleable.CustomImageView_image_src);
+        mDrawable = typedArray.getDrawable(R.styleable.ScaleDrawImageView_image_src);
         if (mDrawable != null) {
             mBitmap = ImageUtil.drawableToBitmap(mDrawable);
         }

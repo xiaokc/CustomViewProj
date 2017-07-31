@@ -6,23 +6,19 @@ import java.util.Map;
 
 import com.android.cong.customviewproj.R;
 import com.android.cong.customviewproj.pictureview.ImageUtil;
-import com.android.cong.customviewproj.pictureview.custom.CustomImageView;
+import com.android.cong.customviewproj.pictureview.custom.ScaleDrawImageView;
 import com.android.cong.customviewproj.pictureview.custom.OnBitmapSaveListener;
-import com.android.cong.customviewproj.pictureview.custom.OnViewClickListener;
 import com.android.cong.customviewproj.screenocr.ScreenUtil;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Trace;
 import android.support.annotation.Nullable;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
@@ -30,7 +26,7 @@ import android.widget.Toast;
  */
 
 public class ScaleActivity extends Activity implements View.OnClickListener {
-    private CustomImageView customImageView;
+    private ScaleDrawImageView scaleDrawImageView;
     private Button btnSave;
     private ImageView btnRevoke;
 
@@ -59,7 +55,7 @@ public class ScaleActivity extends Activity implements View.OnClickListener {
     }
 
     private void initView() {
-        customImageView = (CustomImageView) findViewById(R.id.iv_image);
+        scaleDrawImageView = (ScaleDrawImageView) findViewById(R.id.iv_image);
         btnRevoke = (ImageView) findViewById(R.id.btn_revoke);
         btnSave = (Button) findViewById(R.id.btn_edit_save);
 
@@ -124,10 +120,10 @@ public class ScaleActivity extends Activity implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.btn_revoke:
-                customImageView.undo();
+                scaleDrawImageView.undo();
                 break;
             case R.id.btn_edit_save:
-                customImageView.save("/sdcard/" + System.currentTimeMillis() + ".png", new OnBitmapSaveListener() {
+                scaleDrawImageView.save("/sdcard/" + System.currentTimeMillis() + ".png", new OnBitmapSaveListener() {
                     @Override
                     public void onSucc() {
                         Toast.makeText(ScaleActivity.this, "保存成功！", Toast.LENGTH_LONG).show();
@@ -140,35 +136,35 @@ public class ScaleActivity extends Activity implements View.OnClickListener {
                 });
                 break;
             case R.id.iv_color_white:
-                customImageView.setPaintColor(Color.parseColor("#ffffff"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#ffffff"));
                 updateColorToolbar(R.id.iv_color_white);
                 break;
             case R.id.iv_color_black:
-                customImageView.setPaintColor(Color.parseColor("#333333"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#333333"));
                 updateColorToolbar(R.id.iv_color_black);
                 break;
             case R.id.iv_color_red:
-                customImageView.setPaintColor(Color.parseColor("#ff3440"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#ff3440"));
                 updateColorToolbar(R.id.iv_color_red);
                 break;
             case R.id.iv_color_orange:
-                customImageView.setPaintColor(Color.parseColor("#ff5c26"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#ff5c26"));
                 updateColorToolbar(R.id.iv_color_orange);
                 break;
             case R.id.iv_color_yellow:
-                customImageView.setPaintColor(Color.parseColor("#ffd24c"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#ffd24c"));
                 updateColorToolbar(R.id.iv_color_yellow);
                 break;
             case R.id.iv_color_green:
-                customImageView.setPaintColor(Color.parseColor("#00cc88"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#00cc88"));
                 updateColorToolbar(R.id.iv_color_green);
                 break;
             case R.id.iv_color_blue:
-                customImageView.setPaintColor(Color.parseColor("#0ba5d9"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#0ba5d9"));
                 updateColorToolbar(R.id.iv_color_blue);
                 break;
             case R.id.iv_color_purple:
-                customImageView.setPaintColor(Color.parseColor("#d957d9"));
+                scaleDrawImageView.setPaintColor(Color.parseColor("#d957d9"));
                 updateColorToolbar(R.id.iv_color_purple);
                 break;
         }
@@ -214,7 +210,7 @@ public class ScaleActivity extends Activity implements View.OnClickListener {
         super.onResume();
         if (isFirst) {
             isFirst = false;
-            customImageView.setPaintColor(Color.parseColor("#ffffff"));
+            scaleDrawImageView.setPaintColor(Color.parseColor("#ffffff"));
             updateColorToolbar(R.id.iv_color_white);
         }
     }

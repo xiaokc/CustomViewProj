@@ -45,7 +45,7 @@
     </declare-styleable>
 
     <!--CustomImageView-->
-    <declare-styleable name="CustomImageView">
+    <declare-styleable name="ScaleDrawImageView">
         <attr name="image_src" format="integer"/>
     </declare-styleable>
 

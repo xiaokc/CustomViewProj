@@ -9,7 +9,7 @@
             android:layout_weight="1"
             android:background="@color/c_e6e6e6"
     >
-        <com.android.cong.customviewproj.pictureview.custom.CustomImageView
+        <com.android.cong.customviewproj.pictureview.custom.ScaleDrawImageView
                 android:id="@+id/iv_image"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
