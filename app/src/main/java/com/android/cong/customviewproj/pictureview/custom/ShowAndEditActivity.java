@@ -68,6 +68,7 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     private boolean isShowImage; // true-查看图片，false-编辑图片
     private String imagePath;
     private String intentFrom; // intent的来源，"screenshot"-来自截屏，"history"-来自历史页
+    private Bitmap bitmap;
 
     private final int DEFAULT_TEXT_COLOR = Color.parseColor("#99000000");
     private final int TOUCH_DOWN_COLOR = Color.parseColor("#2274e6");
@@ -75,20 +76,21 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scale);
+        setContentView(R.layout.activity_show_and_edit);
 
         initView();
 
         initEvent();
 
         handleGetIntent();
+
     }
 
     private void initView() {
         scaleDrawImageView = (ScaleDrawImageView) findViewById(R.id.iv_image);
         scaleDrawImageView.setClickEnable(true);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.screenshot3);
-        scaleDrawImageView.setBitmap(bitmap);
+//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.screenshot3);
+//        scaleDrawImageView.setBitmap(bitmap);
 
         layoutRevoke = (RelativeLayout) findViewById(R.id.layout_revoke);
 
@@ -178,14 +180,26 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
             if (intent.hasExtra("intentFrom")) {
                 intentFrom = intent.getStringExtra("intentFrom");
             }
-
+            if (intent.hasExtra("bitmap")) {
+                bitmap = intent.getParcelableExtra("bitmap");
+            }
         }
 
-        if (isShowImage) { // 查看图片
-            changeShowToolbar();
-        } else {
-            changeEditToolbar(); // 编辑图片
-        }
+//        if (!TextUtils.isEmpty(intentFrom)) {
+//            if (intentFrom.equals("history")) { // 来自历史页item
+//                if (!TextUtils.isEmpty(imagePath)) {
+//                    File file = new File(imagePath);
+//                    if (file.exists()) {
+//                        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+//                        scaleDrawImageView.setBitmap(bitmap);
+//                    }
+//                }
+//            } else if (intentFrom.equals("screenshot")) { // 来自截屏弹窗
+//                if (bitmap != null) {
+//                    scaleDrawImageView.setBitmap(bitmap);
+//                }
+//            }
+//        }
 
         if (!TextUtils.isEmpty(imagePath)) {
             File file = new File(imagePath);
@@ -194,6 +208,13 @@ public class ShowAndEditActivity extends Activity implements View.OnClickListene
                 scaleDrawImageView.setBitmap(bitmap);
             }
         }
+
+        if (isShowImage) { // 查看图片
+            changeShowToolbar();
+        } else {
+            changeEditToolbar(); // 编辑图片
+        }
+
 
     }
 

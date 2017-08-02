@@ -47,7 +47,7 @@ public class ScaleActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scale);
+        setContentView(R.layout.activity_show_and_edit);
 
         initView();
 

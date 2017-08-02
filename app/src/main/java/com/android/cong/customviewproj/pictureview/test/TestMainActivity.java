@@ -6,6 +6,8 @@ import com.android.cong.customviewproj.pictureview.custom.history.OcrHistoryActi
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -30,6 +32,8 @@ public class TestMainActivity extends Activity{
                 intent.putExtra("intentFrom","screenshot");
                 intent.putExtra("imagePath", imagePath);
                 intent.putExtra("isShow", true);
+//                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.screenshot3);
+//                intent.putExtra("bitmap",bitmap);
                 startActivity(intent);
             }
         });
